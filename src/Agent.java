@@ -44,56 +44,7 @@ public abstract class Agent {
 		this.id = id;
 	}
 
-	// /**
-	// * Gets the total income of the agent calculated based on the amount of
-	// * parcels he has, the crops, the market prices and the subsidies he
-	// * receives.
-	// */
-	// public float getIncome(int year) {
-	// float totalIncome = getSubsidies(year);
-	//
-	// for (int i = 0; i < parcelList.size(); i++) {
-	// Parcel parcel = parcelList.get(i);
-	//
-	// float parcelIncome = parcel.getArea() * Market.getMarketValue(year,
-	// parcel.getPlantType());
-	// parcelIncome *= parcel.getProductivityForCrop(year,
-	// parcel.getPlantType());
-	// totalIncome += parcelIncome;
-	// }
-	// totalIncome *= Config.EXTERNAL_INCOME_FACTOR;
-	// // System.out.println("Income: " + totalIncome);
-	// return totalIncome;
-	// }
-
-	/**
-	 * Sets the income of the agent.
-	 */
-	// private void setIncome(float income) {
-	// }
-	//
-	// /**
-	// * Gets the subsidies for this user
-	// */
-	// public float getSubsidies(int year) {
-	// float totalSubsidies = Config.BASE_SUBSIDIES;
-	// float totalArea = 0;
-	// for (int i = 0; i < parcelList.size(); i++) {
-	// Parcel parcel = parcelList.get(i);
-	// totalArea += parcel.getArea();
-	//
-	// }
-	// totalSubsidies += totalArea * Config.AREA_SUBSIDIES;
-	//
-	// if (getAge() < Config.SUCCESOR_AGE) { // TODO &&new farmer && for 5y
-	// // in a row max :-/
-	// totalSubsidies += Config.YOUNG_FARMER_SUBSIDIES * totalArea;
-	// }
-	//
-	// // System.out.println("Subsidies: " + totalSubsidies);
-	// return totalSubsidies;
-	// }
-
+	
 	/**
 	 * Gets the parcel list for an agent.
 	 * 
