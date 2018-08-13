@@ -24,8 +24,7 @@ public class LandBasedAnimalFarmer extends AnimalFarmer {
 	
 	@Override
 	public boolean canOccupyParcel(Parcel p) {
-		// TODO constants
-		return p.getCoverType() == 91 || p.getCoverType() == 95;
+		return p.getCoverType() == Config.grassland || p.getCoverType() == Config.agr_buildings || p.getCoverType() == Config.empty_cropLand;
 	}
 	
 	@Override

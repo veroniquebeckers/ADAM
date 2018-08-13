@@ -298,8 +298,7 @@ public class Parcel {
 		this.neighborsList.add(p);
 	}
 
-	// TODO: neigbouring parcels for urban pressure and take over are not the
-	// same in reality...
+
 	/**
 	 * Recalculates the amount of urban pressure on a parcel after land use
 	 * changes has occurred, in relation to the amount of urban parcels

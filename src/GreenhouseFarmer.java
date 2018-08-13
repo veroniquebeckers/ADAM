@@ -17,7 +17,7 @@ public class GreenhouseFarmer extends CropFarmer {
 	public void setInitialCropType(ArrayList<Parcel> parcelList) {
 		for (int i = 0; i<parcelList.size();i++){
 			Parcel p = parcelList.get(i);
-			p.setCoverType (94);	//set all parcels to greenhouses
+			p.setCoverType (Config.greenhouses);	//set all parcels to greenhouses
 
 		}
 	}
@@ -29,8 +29,7 @@ public class GreenhouseFarmer extends CropFarmer {
 	
 	@Override
 	public boolean canOccupyParcel(Parcel p) {
-		// TODO constant van maken
-		return p.getCoverType() == 94;
+		return p.getCoverType() == Config.greenhouses;
 	}
 	
 	@Override

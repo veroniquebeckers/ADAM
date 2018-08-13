@@ -25,9 +25,7 @@ public class Market
 	public static float getMarketValue(int year, int cropID) {
 		if(marketValues.get(cropID) == null)
 		{
-			//TODO READD SAFETY CHECK
-			System.out.println("WARNING CropID was not found: " + Integer.toString(cropID));
-			return 0;
+			throw new RuntimeException("WARNING CropID was not found: " + Integer.toString(cropID));
 		}
 		//System.out.println("cropid: " + cropID + " year " + year + " - " + marketValues.get(cropID).get(year));
 		return marketValues.get(cropID).get(year);

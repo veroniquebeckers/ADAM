@@ -25,9 +25,7 @@ public class Rotation
 	public static float getRotationChance(int currentCrop, int nextCrop) {
 		if(rotations.get(currentCrop) == null)
 		{
-			//TODO READD SAFETY CHECK
-			System.out.println("WARNING CropID was not found: " + Integer.toString(currentCrop));
-			return 0;
+			throw new RuntimeException("WARNING CropID was not found: " + Integer.toString(currentCrop));
 		}
 		//System.out.println("cropid: " + cropID + " year " + year + " - " + marketValues.get(cropID).get(year));
 		return rotations.get(currentCrop).get(nextCrop);

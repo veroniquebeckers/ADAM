@@ -11,7 +11,7 @@ public class PermanentCropFarmer extends CropFarmer {
 	public void setInitialCropType(ArrayList<Parcel> parcelList) {
 		for (int i = 0; i<parcelList.size();i++){
 			Parcel p = parcelList.get(i);
-			p.setCoverType (92);	//set all parcels to permanent crops (christmas trees or fruit trees)
+			p.setCoverType (Config.arboriculture);	//set all parcels to permanent crops (christmas trees or fruit trees)
 
 		}
 	}
@@ -23,14 +23,12 @@ public class PermanentCropFarmer extends CropFarmer {
 	
 	@Override
 	public boolean canOccupyParcel(Parcel p) {
-		// TODO constanten van maken
-		return p.getCoverType() == 92 || p.getCoverType() == 93;
+		return p.getCoverType() == Config.fruittrees || p.getCoverType() == Config.arboriculture;
 	}
 	
-	//TO DO add christmas trees 93
 	@Override
 	public int getNextCoverType(int year, float area, Parcel p) {
-		return 92;
+		return Config.arboriculture;
 	}
 	
 	@Override

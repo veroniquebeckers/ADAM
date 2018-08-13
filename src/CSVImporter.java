@@ -106,9 +106,7 @@ public class CSVImporter {
 		return landUseRatioMap;
 		
 	}
-	
-	//TODO: methode aanpassen naar parcel losses
-	
+		
 	private void importUrbanisation(String fileName, MainModel model) {
 		BufferedReader br = null;
 		String line = "";
@@ -280,7 +278,6 @@ public class CSVImporter {
 				for (int i = 0; i < farmer5; i++) {
 					types[i + farmer1+farmer2+farmer3+farmer4] = 4;
 				}
-				// TODO: succession = 4 of 5, c++? => 4, to skip "farmers"
 				// column
 				int c = 7;
 
@@ -692,7 +689,6 @@ public class CSVImporter {
 				
 				Integer parcelID = Integer.parseInt(items[c++]);
 				
-				//TODO remove if you remove rowID from csv
 				String rowID = items[c++];
 				
 				String x = items[c++];

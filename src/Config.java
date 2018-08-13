@@ -58,20 +58,15 @@ public class Config {
 		}
 		return age;
 	}
+
+	// land use codes
+	public static final int grassland = 91;
+	public static final int arboriculture = 92;
+	public static final int fruittrees = 93;
+	public static final int greenhouses = 94;
+	public static final int agr_buildings = 95;
 	
-	// survival percentage per agricultural zone
-//	public static final double Zandstreek = 0.14;
-//	public static final double Polders = 0.19;
-//	public static final double Kempen = 0.14;
-//	public static final double Zandleemstreek = 0.15;
-//	public static final double Leemstreek = 0.23;
-//	public static final double Condroz = 0.08;
-//	public static final double WeidestreekFagne = 0.07;
-//	public static final double WeidestreekLuik = 0.05;
-//	public static final double Famenne = 0.06;
-//	public static final double Hoge_Ardennen = 0.04;
-//	public static final double Jurastreek = 0.06;
-//	public static final double Ardennen = 0.06;	
+	public static int empty_cropLand = 0;
 	
 	// survival percentage per agricultural zone
 	public static final double survZandstreek = 0.19;
@@ -95,6 +90,9 @@ public class Config {
 	public static float startPercSugarbeet = (float) 0.08;
 	public static float startPercRapeseed = (float) 0.01;
 	public static float startPercMaize = (float) 0.18;
+	
+	
+	public static float landOwnershipPerc = 1/3;
 	
 	
 	// BSS lin regresion factor for arable land with crop rotation

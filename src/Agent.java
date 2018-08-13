@@ -44,7 +44,6 @@ public abstract class Agent {
 		this.id = id;
 	}
 
-	
 	/**
 	 * Gets the parcel list for an agent.
 	 * 
@@ -60,7 +59,7 @@ public abstract class Agent {
 	public void addParcel(Parcel parcel) {
 		totalArea += parcel.getArea();
 		parcelList.add(parcel);
-//		setBSS();
+		// setBSS();
 
 	}
 
@@ -76,7 +75,7 @@ public abstract class Agent {
 	public void removeParcel(Parcel parcel) {
 		totalArea -= parcel.getArea();
 		parcelList.remove(parcel);
-//		setBSS();
+		// setBSS();
 
 	}
 
@@ -116,22 +115,23 @@ public abstract class Agent {
 		this.maxLand = maxLand;
 	}
 
-	public float getSubsidy(){
+	public float getSubsidy() {
 		float SUBS = 0;
-		if (Config.GENERAL_FARM_SUBSIDY){
+		if (Config.GENERAL_FARM_SUBSIDY) {
 			SUBS += Config.SUBSIDY;
-		}if (Config.AREA_SUBSIDY){
-			SUBS += this.getLandArea()*Config.SUBSIDY_PER_HA;
+		}
+		if (Config.AREA_SUBSIDY) {
+			SUBS += this.getLandArea() * Config.SUBSIDY_PER_HA;
 		}
 		return SUBS;
 	}
+
 	public int getID() {
 		return id;
 	}
 
 	public void die() {
-		if(this.isDead)
-		{
+		if (this.isDead) {
 			throw new Error("I'm already dead, stop killing me");
 		}
 
@@ -150,12 +150,13 @@ public abstract class Agent {
 		return this.isDead;
 	}
 
-	public boolean isFarmer(){
-		if(this instanceof Farmer){
+	public boolean isFarmer() {
+		if (this instanceof Farmer) {
 			return true;
 		}
 		return false;
 	}
+
 	public static void setMortality(int age, double rate) {
 		mortalityRate.put(age, rate);
 	}
@@ -173,14 +174,15 @@ public abstract class Agent {
 		for (int i = 0; i < this.parcelList.size(); i++) {
 			Parcel p = this.parcelList.get(i);
 			int newCrop = getNextCoverType(year, p.getArea(), p);
-//			if (p.getAgricultZone()==14 || p.getAgricultZone()==14){
-//				if(newCrop==103){
-//				System.out.println ("I'm in the sand area and I choose maize!");
-//			}
-//			else {
-//				System.out.println ("I'm in the sand area and I choose something else!");
-//			}
-//				}
+			// if (p.getAgricultZone()==14 || p.getAgricultZone()==14){
+			// if(newCrop==103){
+			// System.out.println ("I'm in the sand area and I choose maize!");
+			// }
+			// else {
+			// System.out.println ("I'm in the sand area and I choose something
+			// else!");
+			// }
+			// }
 			p.setCoverType(newCrop);
 		}
 	}
@@ -199,7 +201,7 @@ public abstract class Agent {
 	public abstract boolean canOccupyParcel(Parcel p);
 
 	abstract public int getSurvivalSize();
-	
+
 	public void setMunicipality(Municipality obj) {
 		this.municipality = obj;
 
@@ -232,47 +234,48 @@ public abstract class Agent {
 		}
 
 	}
-	
 
-	public int getAgrZone()
-	{
+	public int getAgrZone() {
 		return AgrZone;
 	}
-	
-	public void setAgrzone(int AZ)
-	{
+
+	public void setAgrzone(int AZ) {
 		this.AgrZone = AZ;
 	}
 
-//	public void setBSS(){
-//		if (this.getFarmerType()=="YearlyCropFarmer"){
-//		double BSS = Config.getBSSRotForZone(this.getAgrZone())*totalArea;
-//		}
-//		if (this.getFarmerType()=="PermanentCropFarmer"){
-//		double BSS = Config.getBSSPermForZone(this.getAgrZone())*totalArea;
-//		}
-//		if (this.getFarmerType()=="LandBasedAnimalFarmer"){
-//		double BSS = Config.BSSforLBAF*totalArea;
-//		}
-//		this.BSS = BSS;
-//	}
+	// public void setBSS(){
+	// if (this.getFarmerType()=="YearlyCropFarmer"){
+	// double BSS = Config.getBSSRotForZone(this.getAgrZone())*totalArea;
+	// }
+	// if (this.getFarmerType()=="PermanentCropFarmer"){
+	// double BSS = Config.getBSSPermForZone(this.getAgrZone())*totalArea;
+	// }
+	// if (this.getFarmerType()=="LandBasedAnimalFarmer"){
+	// double BSS = Config.BSSforLBAF*totalArea;
+	// }
+	// this.BSS = BSS;
+	// }
 
-	public double getBSS()
-	{
+	public double getBSS() {
 		double BSS = 0.0;
-		if (this.getFarmerType().equals("YearlyCropFarmer")){
-			BSS = Config.getBSSRotForZone(this.getAgrZone())*totalArea;
-		}
-		else if (this.getFarmerType().equals("PermanentCropFarmer")){
-			BSS = Config.getBSSPermForZone(this.getAgrZone())*totalArea;
-		}
-		else if (this.getFarmerType().equals("LandBasedAnimalFarmer")){
-			BSS = Config.BSSforLBAF*totalArea;
-		}
-		else{
-			BSS=0;
+		if (this.getFarmerType().equals("YearlyCropFarmer")) {
+			BSS = Config.getBSSRotForZone(this.getAgrZone()) * totalArea;
+		} else if (this.getFarmerType().equals("PermanentCropFarmer")) {
+			BSS = Config.getBSSPermForZone(this.getAgrZone()) * totalArea;
+		} else if (this.getFarmerType().equals("LandBasedAnimalFarmer")) {
+			BSS = Config.BSSforLBAF * totalArea;
+		} else {
+			BSS = 0;
 		}
 		return BSS;
+	}
+
+	// Returns the parcels that are not owned by the farmer
+	public ArrayList<Parcel> getRentedParcels() {
+		int size = this.parcelList.size();
+		int parcelsToKeep = (int)  (size * Config.landOwnershipPerc);
+		
+		return new ArrayList<Parcel>(parcelList.subList(size - parcelsToKeep, size));
 	}
 }
 

@@ -10,7 +10,6 @@ public class CSVPrinter {
 
 	@SuppressWarnings("unchecked")
 	public void printCropTypePercentage(MainModel mainModel, HashMap<String, ArrayList<Tuple<Parcel, Float>>> outputMappingDict, int year) {
-		// TODO Auto-generated method stub
 
 		//System.out.println("Printing yearly land use percentages ");
 		StringBuilder outputString = new StringBuilder();

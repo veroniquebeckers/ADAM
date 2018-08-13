@@ -50,7 +50,6 @@ public int getNextCoverType(int year, float area, Parcel parcel)
 		int currentCover = parcel.getCoverType();
 		
 		if (currentCover != Parcel.AGRBUILDING) {
-			//TODO rotations??
 			// Loop over all crop types to calculate their productivity
 			float[] probs = new float[cropMap.size()+1];
 			ArrayList<Integer> crops = new ArrayList<Integer>();
@@ -108,7 +107,6 @@ public int getNextCoverType(int year, float area, Parcel parcel)
 	
 	@Override
 	public boolean canOccupyParcel(Parcel p) {
-		// TODO constants
-		return p.getCoverType() == 0;
+		return p.getCoverType() == Config.empty_cropLand;
 	}
 }

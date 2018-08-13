@@ -34,8 +34,8 @@ public class MainModel {
 	// data, agent data and agent distribution, crop rotation data, market data
 	// and parcel neighbors.
 
-	/**<
-	 * Starts model.
+	/**
+	 * < Starts model.
 	 * 
 	 * @param args
 	 */
@@ -44,13 +44,14 @@ public class MainModel {
 			Config.START_YEAR = Integer.parseInt(args[0]);
 			Config.END_YEAR = Integer.parseInt(args[1]);
 			Config.scenario = args[2];
-//			Config.RETIREMENT_CHANCE = Double.parseDouble(args[2]);
-//			String FOLDER_NAME = args[2];
-//			Config.outputFolder = "./OUTPUT_Bel_" + FOLDER_NAME + "/";
+			// Config.RETIREMENT_CHANCE = Double.parseDouble(args[2]);
+			// String FOLDER_NAME = args[2];
+			// Config.outputFolder = "./OUTPUT_Bel_" + FOLDER_NAME + "/";
 			// Config.SURVIVAL_SIZE_NONLAND_BASED = Integer.parseInt(args[3]);
 
 			System.out.println("Arguments are being used!!");
-//			System.out.println("Retirement chance:" + Config.RETIREMENT_CHANCE);
+			// System.out.println("Retirement chance:" +
+			// Config.RETIREMENT_CHANCE);
 
 		}
 
@@ -70,7 +71,7 @@ public class MainModel {
 		if (Config.ABM_output == true) {
 			log("");
 			printAgentHistory();
-//			printParcelHistory();
+			// printParcelHistory();
 		}
 		log("Run finished");
 	}
@@ -229,8 +230,15 @@ public class MainModel {
 				// agent.getSurvivalSize())) {
 				// agent.setAge(Config.getSUCCESOR_AGE());
 				// }
-				if (age == Config.RETIREMENT_AGE && CustomRandom.getDouble() < farmSurvivalChance(agent)) {
-					agent.setAge(Config.getSUCCESOR_AGE());
+				if (age == Config.RETIREMENT_AGE) {
+					if (CustomRandom.getDouble() < farmSurvivalChance(agent)) {
+						agent.setAge(Config.getSUCCESOR_AGE());
+					} else {
+						ArrayList<Parcel> rentedParcelList = agent.getRentedParcels();
+						for (int p = 0; p < rentedParcelList.size(); p++) {
+							reassignParcel(year, rentedParcelList.get(p));
+						}
+					}
 				} else if (age >= Config.RETIREMENT_AGE && CustomRandom.getDouble() <= Config.RETIREMENT_CHANCE) {
 					terminateUncompetitiveAgent(year, agent);
 					deadAgents++;
@@ -270,9 +278,9 @@ public class MainModel {
 			}
 		}
 		for (int i = 0; i < allCurrentAgents.size(); i++) {
-//			if ((i%500)==0){
-//				log("Agents done:"+i);
-//			}
+			// if ((i%500)==0){
+			// log("Agents done:"+i);
+			// }
 
 			Agent agent = allCurrentAgents.get(i);
 			agent.updateCoverType(year);
@@ -287,12 +295,12 @@ public class MainModel {
 
 		// 3 loop over all parcels and save their
 		// history
-		if (Config.ABM_output==true){
+		if (Config.ABM_output == true) {
 			for (Parcel parcel : myParcels.values()) {
 				// parcel.recalculatePressure();
 				parcel.saveCurrentState();
-				}
 			}
+		}
 
 		// Print current crop type percentages to CSV for DVM
 		if (Config.DVM_output == true) {
@@ -324,7 +332,10 @@ public class MainModel {
 		@SuppressWarnings("unchecked")
 		ArrayList<Parcel> parcels = (ArrayList<Parcel>) agent.getParcelList().clone();
 		for (int i = 0; i < parcels.size(); i++) {
-			reassignParcel(year, parcels.get(i));
+			if (parcels.get(i).getLandUse() == Parcel.AGRI) {
+				reassignParcel(year, parcels.get(i));
+			} else
+				parcels.get(i).setAgent(agent.LANDLORD);
 		}
 		agent.die();
 
@@ -377,8 +388,8 @@ public class MainModel {
 	}
 
 	/**
-	 * TODO DOCUMENT ME (and my friends) Parcel argument is a parcel belonging
-	 * to agent.initial that hasn't been given away yet
+	 * Parcel argument is a parcel belonging to agent.initial that hasn't been
+	 * given away yet
 	 */
 	private void joinMunicipParcel(Parcel p) {
 
@@ -415,9 +426,9 @@ public class MainModel {
 		Collections.shuffle(potentials);
 
 		for (Parcel p : potentials) {
-			// TODO 95 in constant zetten
-			if (p.getAgent() == Agent.INITIAL && p.getCoverType() == 95) {
+			if (p.getAgent() == Agent.INITIAL && p.getCoverType() == Config.agr_buildings) {
 				a.setAgrzone(p.getAgricultZone());
+				p.setLandUse(Parcel.URBAN);
 				return p;
 			}
 
@@ -429,6 +440,7 @@ public class MainModel {
 		for (Parcel p : potentials) {
 			if (p.getAgent() == Agent.INITIAL) {
 				a.setAgrzone(p.getAgricultZone());
+				p.setLandUse(Parcel.URBAN);
 				return p;
 			}
 		}
@@ -463,7 +475,7 @@ public class MainModel {
 			}
 		}
 
-		// All agents now have at least one parcel (farm, type 95)
+		// All agents now have at least one parcel
 		// Get all the parcels still assigned to Agent.INITIAL and assign them
 		// to the owners of neighboring parcels
 		int parcelsAtStart;
@@ -640,9 +652,8 @@ public class MainModel {
 		}
 
 		if ((potentialsSameClass.size() == 0) && (potentialsOthClass.size() == 0)) {
-//			log("No potentials -> landlord");
-//			log(parcel.getMunicipality().getName());
-			// TODO better logic
+			// log("No potentials -> landlord");
+			// log(parcel.getMunicipality().getName());
 			parcel.setAgent(Agent.LANDLORD);
 			parcel.setLandUse(Parcel.FOREST);
 			// log("---------------------------------------landlord");
@@ -652,7 +663,6 @@ public class MainModel {
 				Agent newOwner = potentialsOthClass.get(random);
 				parcel.setAgent(newOwner);
 				parcel.setCoverType(newOwner.getGeneralCover);
-				// TODO change land use of parcel
 			} else {
 				int random = (int) Math.floor(CustomRandom.getDouble() * potentialsSameClass.size());
 
@@ -732,7 +742,7 @@ public class MainModel {
 			writer.close();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log("Writing agent.csv failed");
 			e.printStackTrace();
 		}
 	}
@@ -743,7 +753,7 @@ public class MainModel {
 			writer = new PrintWriter(Config.outputFolder + "/done_" + year + ".txt");
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log("Writing done.txt failed");
 			e.printStackTrace();
 		}
 		System.out.println("Done!!");
@@ -812,7 +822,7 @@ public class MainModel {
 			writer.close();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log("Writing parcel.csv file failed");
 			e.printStackTrace();
 		}
 	}
@@ -841,8 +851,7 @@ public class MainModel {
 				ArrayList<Parcel> parcels = mun.getParcels();
 				for (Parcel parc : parcels) {
 					Agent activeAgent = parc.getAgent();
-					if (!activeAgents.contains(activeAgent) && activeAgent.getID() != Agent.LANDLORD.getID()) 
-					{
+					if (!activeAgents.contains(activeAgent) && activeAgent.getID() != Agent.LANDLORD.getID()) {
 						activeAgents.add(activeAgent);
 					}
 				}
@@ -860,8 +869,8 @@ public class MainModel {
 
 				avg = total / activeAgents.size();
 
-
-				writer.println(NIS + ";" + name + ";" + avg + ";" + agents.size() + ";" + activeAgents.size() +";"+activeFarmerIDS);
+				writer.println(NIS + ";" + name + ";" + avg + ";" + agents.size() + ";" + activeAgents.size() + ";"
+						+ activeFarmerIDS);
 
 			}
 
@@ -869,7 +878,7 @@ public class MainModel {
 			writer.close();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log("Writing municipality data failed");
 			e.printStackTrace();
 		}
 	}
@@ -898,7 +907,7 @@ public class MainModel {
 			writer.close();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			log("Writing agent history file failed");
 			e.printStackTrace();
 		}
 	}
@@ -948,8 +957,7 @@ public class MainModel {
 
 		for (Parcel parcel : myParcels.values()) {
 
-			// TODO change if productivity is also for forest
-			if (parcel.getLandUse() == 2) {
+			if (parcel.getLandUse() == parcel.AGRI) {
 				HashMap<Integer, Float> prods = productivities.get(parcel.getLocation());
 				parcel.setProductivity(prods);
 
@@ -979,7 +987,7 @@ public class MainModel {
 		return statistics;
 	}
 
-	public double [] getAverageBSSforType(Agent retiringFarmer){
+	public double[] getAverageBSSforType(Agent retiringFarmer) {
 		ArrayList<Double> farmBSS = new ArrayList<Double>();
 		double totFarmBSS = 0;
 		double temp = 0;
@@ -999,58 +1007,69 @@ public class MainModel {
 		statistics[1] = SD;
 		return statistics;
 	}
+
 	public double farmSurvivalChance(Agent retiringFarmer) {
 		double stats[] = getAverageBSSforType(retiringFarmer);
 		double mean = stats[0];
 		double SD = stats[1];
 		double correctionFactorBSS = 1.0;
-		if (Config.POLICY_BSS_IMPACT){
-			correctionFactorBSS = Config.BSS_IMPACT_FACTOR; 
+		if (Config.POLICY_BSS_IMPACT) {
+			correctionFactorBSS = Config.BSS_IMPACT_FACTOR;
 		}
 
 		double survivalChance = Config.getSurvivalPercentageForZone(retiringFarmer.getAgrZone());
-		
-		if(Config.SMALL_FARM_SUBSIDY){
-			if (retiringFarmer.getBSS()<mean){
+
+		if (Config.SMALL_FARM_SUBSIDY) {
+			if (retiringFarmer.getBSS() < mean) {
 				correctionFactorBSS = Config.BSS_IMPACT_FACTOR;
 			}
 		}
 
+		// if (retiringFarmer.getFarmerType() == "NonLandBasedAnimalFarmer") {
+		// return survivalChance;
+		// } else if (retiringFarmer.getFarmerType() == "GreenhouseFarmer") {
+		// return survivalChance;
+		// } else if (retiringFarmer.getBSS()*correctionFactorBSS
+		// +retiringFarmer.getSubsidy > (mean + SD * 2.5)) {
+		// return 0.8;
+		// } else if
+		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
+		// > (mean + SD * 1.5)) {
+		// return survivalChance * 1.75;
+		// } else if
+		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
+		// > (mean + SD * 0.5)) {
+		// return survivalChance * 1.5;
+		// } else if
+		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
+		// > (mean - SD * 0.5)) {
+		// return survivalChance * 1;
+		// } else if
+		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy>
+		// (mean - SD * 1.5)) {
+		// return survivalChance * 0.5;
+		// } else if
+		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
+		// > (mean - SD * 2.5)) {
+		// return survivalChance * 0.25;
+		// }
+		// return survivalChance*0.1;
 
-//		if (retiringFarmer.getFarmerType() == "NonLandBasedAnimalFarmer") {
-//			return survivalChance;
-//		} else if (retiringFarmer.getFarmerType() == "GreenhouseFarmer") {
-//			return survivalChance;
-//		} else if (retiringFarmer.getBSS()*correctionFactorBSS +retiringFarmer.getSubsidy > (mean + SD * 2.5)) {
-//			return 0.8;
-//		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean + SD * 1.5)) {
-//			return survivalChance * 1.75;
-//		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean + SD * 0.5)) {
-//			return survivalChance * 1.5;
-//		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean - SD * 0.5)) {
-//			return survivalChance * 1;
-//		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy> (mean - SD * 1.5)) {
-//			return survivalChance * 0.5;
-//		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean - SD * 2.5)) {
-//			return survivalChance * 0.25;
-//		}
-//		return survivalChance*0.1;
-		
 		if (retiringFarmer.getFarmerType() == "NonLandBasedAnimalFarmer") {
 			return survivalChance;
 		} else if (retiringFarmer.getFarmerType() == "GreenhouseFarmer") {
 			return survivalChance;
-		} else if (retiringFarmer.getBSS()*correctionFactorBSS +retiringFarmer.getSubsidy > (mean + SD * 2.5)) {
-			return survivalChance*4;
-		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean + SD * 1.5)) {
-			return survivalChance *3;
-		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean + SD * 0.5)) {
-			return survivalChance *2;
-		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean - SD * 0.5)) {
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean + SD * 2.5)) {
+			return survivalChance * 4;
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean + SD * 1.5)) {
+			return survivalChance * 3;
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean + SD * 0.5)) {
+			return survivalChance * 2;
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean - SD * 0.5)) {
 			return survivalChance * 1;
-		} else if (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy > (mean - SD * 0.75)) {
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean - SD * 0.75)) {
 			return survivalChance * 0.5;
 		}
-		return survivalChance*0.1;
+		return survivalChance * 0.1;
 	}
 }
