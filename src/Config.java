@@ -16,13 +16,13 @@ public class Config {
 	 * Start and end year of the model.
 	 */
 	
-	public static int START_YEAR = 2013;
-	public static int END_YEAR = 2030;
+	public static int START_YEAR = 2000;
+	public static int END_YEAR = 2010;
 	public static int CURRENT_YEAR;
 	public static String scenario = "RC";
 
 	public static final int RETIREMENT_AGE = 65; /**65=legal pension age in Belgium*/
-	public static double RETIREMENT_CHANCE = 0.09; /**calibrated parameter*/
+	public static double RETIREMENT_CHANCE = 0.2; /**calibrated parameter*/
 	public static final float SUBSIDY = 0;	/**General fixed subsidy that each farmer recieves if GENERAL_FARM_SUBSIDY = true*/
 	public static final float SUBSIDY_PER_HA = 0; /**Multiplication factor per ha, used if AREA_SUBSIDY = true*/
 	public static final double BSS_IMPACT_FACTOR = 1.2; /*Correction factor on BSS due to policy if Config.POLICIY_BSS_IMPACT = true*/
@@ -33,10 +33,10 @@ public class Config {
 
 	
 //	public static String outputFolder ="./OUTPUT_Bel_" + FOLDER_NAME  +"/";
-	public static String basePath = "./Input_Belgium_AGR_13/";
+	public static String basePath = "./Input_Belgium_AGR_00/";
 	public static String basePathProductivity = basePath + "/PROD/";
 	public static String basePathScenario = basePath + "/SCENARIO/";
-	public static String outputFolder ="./OUTPUT_2013_newTest2/";
+	public static String outputFolder ="./OUTPUT_2000_20/";
 
 /**
  * Allow model to run with DVM, which starts before 2010 where no scenario data is available
@@ -66,7 +66,7 @@ public class Config {
 	public static final int greenhouses = 94;
 	public static final int agr_buildings = 95;
 	
-	public static int empty_cropLand = 0;
+	public static int cropLand = 0;
 	
 	// survival percentage per agricultural zone
 	public static final double survZandstreek = 0.19;
@@ -127,6 +127,8 @@ public class Config {
 	
 	
 	public static final double BSSforLBAF = 2316.4;
+	public static final float URBANISATION_DISTANCE = 1000;
+	public static final int UrbanisationTreshold = 0; //Amount of agricultural parcels still left in surrounding when parcel is considered too isolated to be used commercially
 
 	public static double getSurvivalPercentageForZone(int zone)
 	{

@@ -43,10 +43,10 @@ public class MainModel {
 		if (args.length >= 1) {
 			Config.START_YEAR = Integer.parseInt(args[0]);
 			Config.END_YEAR = Integer.parseInt(args[1]);
-			Config.scenario = args[2];
-			// Config.RETIREMENT_CHANCE = Double.parseDouble(args[2]);
-			// String FOLDER_NAME = args[2];
-			// Config.outputFolder = "./OUTPUT_Bel_" + FOLDER_NAME + "/";
+			//Config.scenario = args[2];
+			Config.RETIREMENT_CHANCE = Double.parseDouble(args[2]);
+			String FOLDER_NAME = args[2];
+			Config.outputFolder = "./OUTPUT_Bel_" + FOLDER_NAME + "/";
 			// Config.SURVIVAL_SIZE_NONLAND_BASED = Integer.parseInt(args[3]);
 
 			System.out.println("Arguments are being used!!");
@@ -435,12 +435,13 @@ public class MainModel {
 		}
 
 		// if farmers without parcels are still left, give another parcel than
-		// building
+		// building and set parcel to agr.building
 
 		for (Parcel p : potentials) {
 			if (p.getAgent() == Agent.INITIAL) {
 				a.setAgrzone(p.getAgricultZone());
 				p.setLandUse(Parcel.URBAN);
+				p.setCoverType(Config.agr_buildings);
 				return p;
 			}
 		}

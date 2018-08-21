@@ -226,11 +226,22 @@ public abstract class Agent {
 	public void updateParcels(int year) {
 		for (int i = 0; i < this.parcelList.size(); i++) {
 			Parcel p = this.parcelList.get(i);
+			ArrayList<Parcel> nearbyNeighbours = p.getNearestParcels();
+			ArrayList<Parcel> agriNeighbours = new ArrayList<Parcel>();
 			if (year == p.getUrbanisationYear()) {
 				p.setLandUse(Parcel.URBAN);
 				p.setAgent(Agent.LANDLORD);
+				p.setCoverType(-1);
 			}
-
+			for(int j=0; j<nearbyNeighbours.size();j++){
+				if(nearbyNeighbours.get(j).getLandUse()==Parcel.AGRI){
+					agriNeighbours.add(nearbyNeighbours.get(j));
+				}
+				if(nearbyNeighbours.size()<=Config.UrbanisationTreshold){
+					p.setLandUse(Parcel.AGRI_NONCOMM);
+					p.setAgent(Agent.LANDLORD);
+				}
+			}
 		}
 
 	}

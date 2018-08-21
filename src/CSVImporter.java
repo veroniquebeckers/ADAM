@@ -485,9 +485,9 @@ public class CSVImporter {
 
 				int parcel = Integer.parseInt(items[0]);
 				int neighbor = Integer.parseInt(items[1]);
-//				System.out.println("Parcel neighbor: #" + parcel);
+				float distance = Float.parseFloat(items[2]);
 
-				model.getParcel(parcel).addNeighbor(model.getParcel(neighbor));
+				model.getParcel(parcel).addNeighbor(model.getParcel(neighbor),distance);
 
 			}
 

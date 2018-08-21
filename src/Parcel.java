@@ -36,7 +36,7 @@ public class Parcel {
 	public static int URBAN = 1;
 	public static int FOREST = 3;
 	public static int AGRI = 2;
-	public static int AGRI_NATURE = 4;
+	public static int AGRI_NONCOMM = 4;
 
 	/**
 	 * Parameters for parcel
@@ -50,6 +50,8 @@ public class Parcel {
 	private int zoning;
 	private int id;
 	private ArrayList<Parcel> neighborsList;
+	private ArrayList<Parcel> nearestParcels;
+
 	private int urbanPressure;
 	private HashMap<Integer, Float> productivity;
 	private ArrayList<Integer> landUseHistory = new ArrayList<Integer>();
@@ -58,7 +60,6 @@ public class Parcel {
 	private String location;
 	private int urbanisationYear;
 	private int AgricultZone;
-	static final int AGRBUILDING = 95;
 	
 	/**
 	 * Initialize a parcel, owned by an agent, with a certain location, size,
@@ -95,6 +96,7 @@ public class Parcel {
 		
 
 		neighborsList = new ArrayList<Parcel>();
+		nearestParcels = new ArrayList<Parcel>();
 	}
 	
 	private void setAgriculturalRegion(int AZ) {
@@ -170,10 +172,6 @@ public class Parcel {
 	public void setLandUse(int landUse) {
 		this.landUse = landUse;
 		
-		if(landUse == Parcel.URBAN)
-		{
-			this.setCoverType(-1);
-		}
 	}
 
 	/**
@@ -211,7 +209,7 @@ public class Parcel {
 	public void setArea(float area) {
 		this.area = area;
 	}
-
+	
 	/**
 	 * Get the agent that owns the parcel.
 	 * 
@@ -288,15 +286,29 @@ public class Parcel {
 	}
 	
 	
+	
 	/**
 	 * Adds a parcel to the list containing all neighboring parcels of the
 	 * parcel.
 	 * 
 	 * @param p
 	 */
-	public void addNeighbor(Parcel p) {
+	public void addNeighbor(Parcel p, float distance) {
 		this.neighborsList.add(p);
+		
+		if(distance <= Config.URBANISATION_DISTANCE)
+		{
+			nearestParcels.add(p);
+		}
+		
+		
 	}
+
+	public ArrayList<Parcel> getNearestParcels ()
+	{
+		return this.nearestParcels;
+	}
+	
 
 
 	/**
@@ -397,6 +409,7 @@ public class Parcel {
 	public Object getLocation() {
 		return location;
 	}
+
 	
 
 	
