@@ -66,7 +66,7 @@ public class Config {
 	public static final int fruittrees = 93;
 	public static final int greenhouses = 94;
 	public static final int agr_buildings = 95;
-	
+	public static int farm_house = 96;
 	public static int cropLand = 0;
 	
 	// survival percentage per agricultural zone
@@ -94,6 +94,7 @@ public class Config {
 	
 	
 	public static float landOwnershipPerc = 1/3;
+
 	
 	
 	// BSS lin regresion factor for arable land with crop rotation

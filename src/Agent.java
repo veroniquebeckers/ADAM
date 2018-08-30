@@ -173,7 +173,7 @@ public abstract class Agent {
 	public void updateCoverType(int year) {
 		for (int i = 0; i < this.parcelList.size(); i++) {
 			Parcel p = this.parcelList.get(i);
-			if(p.getLandUse()!=Parcel.URBAN){
+			if(p.getCoverType()!=Config.farm_house && p.getCoverType()!=Config.agr_buildings){
 			int newCrop = getNextCoverType(year, p.getArea(), p);
 			// if (p.getAgricultZone()==14 || p.getAgricultZone()==14){
 			// if(newCrop==103){

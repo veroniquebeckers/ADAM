@@ -334,7 +334,7 @@ public class MainModel {
 		@SuppressWarnings("unchecked")
 		ArrayList<Parcel> parcels = (ArrayList<Parcel>) agent.getParcelList().clone();
 		for (int i = 0; i < parcels.size(); i++) {
-			if (parcels.get(i).getLandUse() == Parcel.AGRI) {
+			if (parcels.get(i).getCoverType() == Config.farm_house) {
 				reassignParcel(year, parcels.get(i));
 			} else
 				parcels.get(i).setAgent(agent.LANDLORD);
@@ -430,7 +430,7 @@ public class MainModel {
 		for (Parcel p : potentials) {
 			if (p.getAgent() == Agent.INITIAL && p.getCoverType() == Config.agr_buildings) {
 				a.setAgrzone(p.getAgricultZone());
-				p.setLandUse(Parcel.URBAN);
+				p.setCoverType(Config.farm_house);
 				return p;
 			}
 
@@ -442,8 +442,7 @@ public class MainModel {
 		for (Parcel p : potentials) {
 			if (p.getAgent() == Agent.INITIAL) {
 				a.setAgrzone(p.getAgricultZone());
-				p.setLandUse(Parcel.URBAN);
-				p.setCoverType(Config.agr_buildings);
+				p.setCoverType(Config.farm_house);
 				return p;
 			}
 		}

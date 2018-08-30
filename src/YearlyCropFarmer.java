@@ -49,7 +49,7 @@ public int getNextCoverType(int year, float area, Parcel parcel)
 	{
 		int currentCover = parcel.getCoverType();
 		
-		if (currentCover != Config.agr_buildings) {
+		if (currentCover != Config.farm_house && currentCover != Config.farm_house) {
 			// Loop over all crop types to calculate their productivity
 			float[] probs = new float[cropMap.size()+1];
 			ArrayList<Integer> crops = new ArrayList<Integer>();

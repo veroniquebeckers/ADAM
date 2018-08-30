@@ -11,8 +11,9 @@ public class NonLandBasedAnimalFarmer extends AnimalFarmer {
 	public void setInitialCropType(ArrayList<Parcel> parcelList) {
 		for (int i = 0; i<parcelList.size();i++){
 			Parcel p = parcelList.get(i);
+			if (p.getCoverType()!= Config.farm_house){
 			p.setCoverType (Config.agr_buildings);	//set all parcels to stables
-
+			}
 		}
 	}
 	
