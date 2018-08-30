@@ -9,10 +9,15 @@ public class LandBasedAnimalFarmer extends AnimalFarmer {
 	@Override
 	public void setInitialCropType(ArrayList<Parcel> parcelList) {
 		Parcel p = parcelList.get(0);	//set first parcel to stables
-		p.setCoverType(95);
+		p.setCoverType(Config.agr_buildings);
 		for (int i = 1; i<parcelList.size();i++){
 			Parcel parc = parcelList.get(i);
-			parc.setCoverType (91);	//set rest to grassland
+			if (parc.getCoverType()==Config.cropLand){
+				parc.setCoverType(Parcel.MAIZE);
+			}
+			else {
+				parc.setCoverType (Config.grassland);	//set rest to grassland
+			}
 
 		}
 	}
@@ -29,6 +34,9 @@ public class LandBasedAnimalFarmer extends AnimalFarmer {
 	
 	@Override
 	public int getNextCoverType(int year, float area, Parcel p) {
-		return 91;
+		if(p.getCoverType()!=Config.grassland || p.getCoverType() != Config.agr_buildings){
+			return Parcel.MAIZE;
+		}
+		return p.getCoverType();
 	}
 }

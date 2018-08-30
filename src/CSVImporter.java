@@ -428,7 +428,7 @@ public class CSVImporter {
 //				System.out.println("Parcel id: #" + id);
 
 				int LU = Integer.parseInt(items[c++]);
-				int LU_type = Integer.parseInt(items[c++]);
+				int CROP_type = Integer.parseInt(items[c++]);
 				float area = Float.parseFloat(items[c++]);
 				//float x = Float.parseFloat(items[c++]);
 				//float y = Float.parseFloat(items[c++]);
@@ -440,7 +440,7 @@ public class CSVImporter {
 
 				Municipality munic = model.getMunicipality(NIS);
 
-				Parcel obj = new Parcel(id, area, LU, zone, LU_type, munic, LBS);
+				Parcel obj = new Parcel(id, area, LU, zone, CROP_type, munic, LBS);
 				obj.setLocation(mappingDict.get(id));
 				munic.addParcel(obj);
 				model.addParcel(obj);

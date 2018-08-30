@@ -34,6 +34,6 @@ public class GreenhouseFarmer extends CropFarmer {
 	
 	@Override
 	public int getNextCoverType(int year, float area, Parcel p) {
-		return 94;
+		return Config.greenhouses;
 	}
 }

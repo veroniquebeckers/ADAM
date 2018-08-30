@@ -74,6 +74,8 @@ public class MainModel {
 			// printParcelHistory();
 		}
 		log("Run finished");
+		log("");
+		log("");
 	}
 
 	/**
@@ -735,8 +737,9 @@ public class MainModel {
 				float totalLand = a.getLandArea();
 				String type = a.getFarmerType();
 				int agrZone = a.getAgrZone();
+				double BSS = a.getBSS();
 
-				writer.println(id + "; " + type + "; " + agrZone + ";" + NIS + ";" + age + "; " + totalLand);
+				writer.println(id + "; " + type + "; " + agrZone + ";" + NIS + ";" + age + "; " + totalLand + ";" + BSS);
 
 			}
 			writer.flush();
