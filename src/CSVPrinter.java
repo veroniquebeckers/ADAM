@@ -18,7 +18,7 @@ public class CSVPrinter {
 
 		DecimalFormat df = new DecimalFormat("#.#####");
 		
-		outputString.append("LON LAT 1 101 102 103 104 105 106 107 112 114 115 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 9999");
+		outputString.append("LON LAT 1 101 102 103 104 105 106 107 112 113 114 115 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 9999");
 
 		Iterator it = outputMappingDict.entrySet().iterator();
 		while (it.hasNext()) {
@@ -40,7 +40,9 @@ public class CSVPrinter {
 			double type105 = 0;
 			double type106 = 0;
 			double type107_91 = 0;
-			double type92_93 = 0;
+			//double type92_93 = 0;
+			double type92 = 0;
+			double type93 = 0;
 			double type94 = 0;
 			double type95 = 0;
 			double totalModelledAgrLand=0;
@@ -59,7 +61,9 @@ public class CSVPrinter {
 					type105 += (t.parcel.getCoverType() == 105 ? t.percentage : 0);
 					type106 += (t.parcel.getCoverType() == 106 ? t.percentage : 0);
 					type107_91 += ((t.parcel.getCoverType() == 107 || t.parcel.getCoverType() == 91) ? t.percentage : 0);
-					type92_93 += ((t.parcel.getCoverType() == 92 || t.parcel.getCoverType() == 93) ? t.percentage  : 0);
+					//type92_93 += ((t.parcel.getCoverType() == 92 || t.parcel.getCoverType() == 93) ? t.percentage  : 0);
+					type92 += (t.parcel.getCoverType() == 92 ? t.percentage  : 0);
+					type93 += (t.parcel.getCoverType() == 93 ? t.percentage  : 0);					
 					type94 += (t.parcel.getCoverType() == 94 ? t.percentage  : 0);
 					type95 += (t.parcel.getCoverType() == 95 ? t.percentage  : 0);
 
@@ -86,15 +90,6 @@ public class CSVPrinter {
 	
 			if (totalModelledAgrLand ==0 && ratio.getTotalAgriLand()!=0 ){
 				 scaler = 1;
-//				 type101 = ratio.getRatio("9")/6 * type101;
-//				 type102 = (ratio.getRatio("9")-type101)/5* type102;
-//				 type103 = (ratio.getRatio("9")-type101-type102)/4* type103;
-//				 type104 = (ratio.getRatio("9")-type101-type102-type103)/3* type104;
-//				 type105 = (ratio.getRatio("9")-type101-type102-type103-type104)/2* type105;
-//				 type106 = (ratio.getRatio("9")-type101-type102-type103-type104-type105)* type106;
-//				 type107_91 = ratio.getRatio("11");
-//				 type92_93 = ratio.getRatio("10");
-//				 type94 = ratio.getRatio("12");
 
 			}
 			outputString.append("\n"+ x + " " + y + " " 
@@ -106,7 +101,9 @@ public class CSVPrinter {
 								+ df.format(type105 * scaler) + " "
 								+ df.format(type106 * scaler) + " "
 								+ df.format(type107_91) + " "
-								+ df.format(type92_93 ) + " "
+								//+ df.format(type92_93 ) + " "
+								+ df.format(type92 ) + " "
+								+ df.format(type93 ) + " "
 								+ df.format(type94 ) + " "
 								+ df.format(type95 ) + " "
 								+ ratio.getRatio("1") + " "

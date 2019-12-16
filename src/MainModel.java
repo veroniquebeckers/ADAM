@@ -43,10 +43,10 @@ public class MainModel {
 		if (args.length >= 1) {
 			Config.START_YEAR = Integer.parseInt(args[0]);
 			Config.END_YEAR = Integer.parseInt(args[1]);
-			//Config.scenario = args[2];
-			Config.RETIREMENT_CHANCE = Double.parseDouble(args[2]);
+			Config.scenario = args[3];
+			//Config.RETIREMENT_CHANCE = Double.parseDouble(args[2]);
 			String FOLDER_NAME = args[2];
-			Config.outputFolder = "./OUTPUT_Bel_" + FOLDER_NAME + "/";
+			Config.outputFolder = "./OUTPUT_Bel_" + Config.scenario + FOLDER_NAME + "/";
 			// Config.SURVIVAL_SIZE_NONLAND_BASED = Integer.parseInt(args[3]);
 
 			System.out.println("Arguments are being used!!");
@@ -70,8 +70,9 @@ public class MainModel {
 		// FINAL OUTPUT
 		if (Config.ABM_output == true) {
 			log("");
+			printParcelHistory();
 			printAgentHistory();
-			// printParcelHistory();
+
 		}
 		log("Run finished");
 		log("");
@@ -110,6 +111,7 @@ public class MainModel {
 		myImporter = new CSVImporter();
 		myImporter.importFiles(this);
 		Agent.createMortalityTable();
+//		myPrinter.printCropTypePercentage(this, outputMappingDict, Config.START_YEAR);
 		assignAgents();
 		// assignParcelTypes();
 		// assignFirstCoverType();
@@ -149,6 +151,9 @@ public class MainModel {
 			log("Processing " + year);
 
 			processYear(year);
+			
+			Config a = new Config();
+			System.out.println((100.0 * Config.a) / (double)Config.b);
 		}
 
 	}
@@ -163,6 +168,7 @@ public class MainModel {
 
 		int agentsAtStartOfYear = getNumberOfActiveAgents();
 		int deadAgents = 0;
+		int succsAgents = 0;
 		int urbanisedAgents = 0;
 
 		log("Agents start of year: " + myAgents.size());
@@ -176,37 +182,7 @@ public class MainModel {
 			int age = agent.getAge();
 			double mortalityChance = agent.getMortality(age);
 
-			// 1-1 Define income
-			// float income = agent.getIncome(year);
-
-			// 1-2 Search dropouts
-
-			// if (CustomRandom.getDouble() < mortalityChance){
-			// //Agent dies
-			// if (CustomRandom.getDouble() < (agent.getLandArea() /
-			// agent.getSurvivalSize())) {
-			// agent.setAge(Config.SUCCESOR_AGE);
-			// }
-			// else {
-			// // 1-3 Terminate agent and search new parcel owners
-			//// log("and no successor found");
-			// // log("Agents left: " + myAgents.size());
-			// terminateUncompetitiveAgent(year, agent);
-			// deadAgents++;
-			// }
-			// }
-			//
-			// if (age == Config.RETIREMENT_AGE && CustomRandom.getDouble() <
-			// (agent.getLandArea() / agent.getSurvivalSize())){
-			// agent.setAge(Config.SUCCESOR_AGE);
-			//
-			//// log("succesor found");
-			// }
-			// if (age >= Config.RETIREMENT_AGE && CustomRandom.getDouble() >=
-			// Config.RETIREMENT_CHANCE){
-			// terminateUncompetitiveAgent(year, agent);
-			// deadAgents++;
-			// }
+			
 
 			if (CustomRandom.getDouble() < mortalityChance) {
 				// log("Agent dies");
@@ -224,6 +200,7 @@ public class MainModel {
 					deadAgents++;
 				} else {
 					agent.setAge(Config.getSUCCESOR_AGE());
+					succsAgents++;
 				}
 			} else {
 				// Agent lives
@@ -235,6 +212,8 @@ public class MainModel {
 				if (age == Config.RETIREMENT_AGE) {
 					if (CustomRandom.getDouble() < farmSurvivalChance(agent)) {
 						agent.setAge(Config.getSUCCESOR_AGE());
+						succsAgents++;
+
 					} else {
 						ArrayList<Parcel> rentedParcelList = agent.getRentedParcels();
 						for (int p = 0; p < rentedParcelList.size(); p++) {
@@ -247,26 +226,7 @@ public class MainModel {
 				}
 			}
 
-			//
-			// if ((age == Config.RETIREMENT_AGE)|| (age<= Config.RETIREMENT_AGE
-			// && CustomRandom.getDouble() < mortalityChance)) {
-			// // if (income > Config.INCOME_THRESHOLD *
-			// // Config.HIGH_INCOME_MULTIPLIER) {
-			// // log("Farmer retires or dies");
-			// if (CustomRandom.getDouble() < (agent.getLandArea() /
-			// agent.getSurvivalSize())) {
-			// agent.setAge(Config.SUCCESOR_AGE);
-			// // log("Farmer has successor");
-			//
-			// } else {
-			// // no successor
-			// // 1-3 Terminate agent and search new owner
-			// terminateUncompetitiveAgent(year, agent);
-			// // log("Agents left: " + myAgents.size());
-			// deadAgents++;
-			// }
-			// }
-			// grow old!
+
 			agent.setAge(agent.getAge() + 1);
 			// 2 - LAND COVER CHANGE
 			if (Config.urbanisation && !agent.isDead()) {
@@ -290,6 +250,7 @@ public class MainModel {
 		}
 
 		log("Agents that died: " + deadAgents);
+		log("Agents successed: " + succsAgents);
 
 		if (agentsAtStartOfYear - deadAgents - urbanisedAgents != this.myAgents.size()) {
 			throw new Error("uh oh");
@@ -305,7 +266,7 @@ public class MainModel {
 		}
 
 		// Print current crop type percentages to CSV for DVM
-		if (Config.DVM_output == true) {
+		if (Config.DVM_output == true && (year==Config.END_YEAR || year==Config.START_YEAR)) {
 			myPrinter.printCropTypePercentage(this, outputMappingDict, year);
 		}
 		if (Config.ABM_output == true) {
@@ -316,7 +277,7 @@ public class MainModel {
 		}
 
 		// Post processing
-		printDoneTXT(Integer.toString(year));
+//B		printDoneTXT(Integer.toString(year));
 
 	}
 
@@ -334,10 +295,12 @@ public class MainModel {
 		@SuppressWarnings("unchecked")
 		ArrayList<Parcel> parcels = (ArrayList<Parcel>) agent.getParcelList().clone();
 		for (int i = 0; i < parcels.size(); i++) {
-			if (parcels.get(i).getCoverType() == Config.farm_house) {
+			if (parcels.get(i).getCoverType() != Config.farm_house) {
 				reassignParcel(year, parcels.get(i));
-			} else
+			} else {
 				parcels.get(i).setAgent(agent.LANDLORD);
+				parcels.get(i).setLandUse(Parcel.URBAN);
+			}
 		}
 		agent.die();
 
@@ -425,7 +388,13 @@ public class MainModel {
 		}
 
 		ArrayList<Parcel> potentials = (ArrayList<Parcel>) parcels.clone();
-		Collections.shuffle(potentials);
+//		Collections.shuffle(potentials);
+		Collections.sort(potentials, new Comparator<Parcel>() {
+			@Override
+			public int compare(Parcel a, Parcel b) {
+		        return Float.compare(a.getArea(),b.getArea());
+		    }
+		});
 
 		for (Parcel p : potentials) {
 			if (p.getAgent() == Agent.INITIAL && p.getCoverType() == Config.agr_buildings) {
@@ -664,7 +633,7 @@ public class MainModel {
 				int random = (int) Math.floor(CustomRandom.getDouble() * potentialsOthClass.size());
 				Agent newOwner = potentialsOthClass.get(random);
 				parcel.setAgent(newOwner);
-				parcel.setCoverType(newOwner.getGeneralCover);
+				parcel.setCoverType(newOwner.getGeneralCover());
 			} else {
 				int random = (int) Math.floor(CustomRandom.getDouble() * potentialsSameClass.size());
 
@@ -715,7 +684,7 @@ public class MainModel {
 	}
 
 	public void printAgentCSV(String suffix) {
-		String header = "OWNER_ID;OWNER_TYPE;AGR_ZONE;MUNICIPALITY_NIS; OWNER_AGE;TOTAL_LAND";
+		String header = "OWNER_ID;OWNER_TYPE;AGR_ZONE;MUNICIPALITY_NIS; OWNER_AGE;TOTAL_LAND;BSS";
 
 		PrintWriter writer;
 		new File(Config.outputFolder + "/agents/").mkdir();
@@ -832,7 +801,7 @@ public class MainModel {
 
 	private void printMunicpalityInfo(String year) {
 		log("Printing municipality data");
-		String header = "NIS;NAME;AVG_SIZE;FARMERS_home;FARMERS_active;FARMER_IDS";
+		String header = "NIS;NAME;AVG_SIZE;FARMERS_home;FARMERS_active;Agr_area;101;102;103;104;105;106;107_91;92;93;94;95";
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(new File(outputDirMunic, "municip_" + year + ".csv"), "UTF-8");
@@ -847,12 +816,40 @@ public class MainModel {
 				float avg = 0;
 				float total = 0;
 				float farmers = 0;
+				float agrArea = 0;
+				float type101 = 0;
+				float type102 = 0;
+				float type103 = 0;
+				float type104 = 0;
+				float type105 = 0;
+				float type106 = 0;
+				float type107_91 = 0;
+				//double type92_93 = 0;
+				float type92 = 0;
+				float type93 = 0;
+				float type94 = 0;
+				float type95 = 0;
+				
 
-				// DEBUG
 				float MAX = 0;
 
 				ArrayList<Parcel> parcels = mun.getParcels();
 				for (Parcel parc : parcels) {
+					agrArea += parc.getLandUse()==2 ? parc.getArea() : 0;
+					type101 += parc.getCoverType()==101 ? parc.getArea() : 0;
+					type102 += parc.getCoverType()==102 ? parc.getArea() : 0;
+					type103 += parc.getCoverType()==103 ? parc.getArea() : 0;
+					type104 += parc.getCoverType()==104 ? parc.getArea() : 0;
+					type105 += parc.getCoverType()==105 ? parc.getArea() : 0;
+					type106 += parc.getCoverType()==106 ? parc.getArea() : 0;
+					type107_91 += parc.getCoverType()==107 ? parc.getArea() : 0;
+					type107_91 += parc.getCoverType()==91 ? parc.getArea() : 0;
+					type92 += parc.getCoverType()==92 ? parc.getArea() : 0;
+					type93 += parc.getCoverType()==93 ? parc.getArea() : 0;
+					type94 += parc.getCoverType()==94 ? parc.getArea() : 0;
+					type95 += parc.getCoverType()==95 ? parc.getArea() : 0;
+
+					
 					Agent activeAgent = parc.getAgent();
 					if (!activeAgents.contains(activeAgent) && activeAgent.getID() != Agent.LANDLORD.getID()) {
 						activeAgents.add(activeAgent);
@@ -863,17 +860,18 @@ public class MainModel {
 					activeFarmerIDS += "-" + ag.getID();
 					float farmSize = ag.getLandArea();
 
-					// DEBUG
 					if (farmSize > MAX)
 						MAX = farmSize;
 
 					total += farmSize;
 				}
-
+//				Define average farm size
 				avg = total / activeAgents.size();
 
 				writer.println(NIS + ";" + name + ";" + avg + ";" + agents.size() + ";" + activeAgents.size() + ";"
-						+ activeFarmerIDS);
+//						+ activeFarmerIDS);
+						+ agrArea + ";" + type101 + ";" + type102 + ";" + type103 + ";" + type104 + ";" + type105 + ";"
+						+ type106 + ";" + type107_91 + ";" + type92 + ";" + type93 + ";" + type94 + ";" + type95);
 
 			}
 
@@ -1016,14 +1014,17 @@ public class MainModel {
 		double mean = stats[0];
 		double SD = stats[1];
 		double correctionFactorBSS = 1.0;
+		double correctionFactorSurv = 1.0;
+
 		if (Config.POLICY_BSS_IMPACT) {
 			correctionFactorBSS = Config.BSS_IMPACT_FACTOR;
+			correctionFactorSurv = Config.BSS_IMPACT_FACTOR;
 		}
 
 		double survivalChance = Config.getSurvivalPercentageForZone(retiringFarmer.getAgrZone());
 
 		if (Config.SMALL_FARM_SUBSIDY) {
-			if (retiringFarmer.getBSS() < mean) {
+			 if (retiringFarmer.getBSS() < mean) {
 				correctionFactorBSS = Config.BSS_IMPACT_FACTOR;
 			}
 		}
@@ -1059,18 +1060,18 @@ public class MainModel {
 		// return survivalChance*0.1;
 
 		if (retiringFarmer.getFarmerType() == "NonLandBasedAnimalFarmer") {
-			return survivalChance;
+			return survivalChance* correctionFactorSurv;
 		} else if (retiringFarmer.getFarmerType() == "GreenhouseFarmer") {
-			return survivalChance;
-		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean + SD * 2.5)) {
+			return survivalChance* correctionFactorSurv;
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS  > (mean + SD * 2.5)) {
 			return survivalChance * 4;
-		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean + SD * 1.5)) {
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS > (mean + SD * 1.5)) {
 			return survivalChance * 3;
-		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean + SD * 0.5)) {
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS  > (mean + SD * 0.5)) {
 			return survivalChance * 2;
-		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean - SD * 0.5)) {
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS  > (mean - SD * 0.5)) {
 			return survivalChance * 1;
-		} else if (retiringFarmer.getBSS() * correctionFactorBSS + retiringFarmer.getSubsidy > (mean - SD * 0.75)) {
+		} else if (retiringFarmer.getBSS() * correctionFactorBSS  > (mean - SD * 0.75)) {
 			return survivalChance * 0.5;
 		}
 		return survivalChance * 0.1;

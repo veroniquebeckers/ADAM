@@ -12,12 +12,7 @@ public class LandBasedAnimalFarmer extends AnimalFarmer {
 		p.setCoverType(Config.agr_buildings);
 		for (int i = 1; i<parcelList.size();i++){
 			Parcel parc = parcelList.get(i);
-			if (parc.getCoverType()==Config.cropLand){
-				parc.setCoverType(Parcel.MAIZE);
-			}
-			else {
-				parc.setCoverType (Config.grassland);	//set rest to grassland
-			}
+			parc.setCoverType(Config.grassland);
 
 		}
 	}
@@ -29,13 +24,13 @@ public class LandBasedAnimalFarmer extends AnimalFarmer {
 	
 	@Override
 	public boolean canOccupyParcel(Parcel p) {
-		return p.getCoverType() == Config.grassland || p.getCoverType() == Config.agr_buildings || p.getCoverType() == Config.cropLand;
+		return p.getCoverType() == Config.grassland || p.getCoverType() == Config.agr_buildings;
 	}
 	
 	@Override
 	public int getNextCoverType(int year, float area, Parcel p) {
 		if(p.getCoverType()!=Config.grassland && p.getCoverType() != Config.agr_buildings && p.getCoverType() != Config.farm_house){
-			return Parcel.MAIZE;
+			return Parcel.GRASS;
 		}
 		return p.getCoverType();
 	}

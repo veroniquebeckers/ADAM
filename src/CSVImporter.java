@@ -12,7 +12,8 @@ public class CSVImporter {
 	String municip = "municipality.csv";
 	String market = "market_varPrice.csv";
 	String cropRot = "CropRot_stat.csv";
-	String parcels = "parcels.csv";
+	String parcels = "parcel_startCrop.csv";
+//	String parcels = "parcel_startCrop.csv";
 	String neighborsFile = "agrNeighb.csv";
 	String mortalityFile = "mortality.csv";
 	String parcelLosses = Config.scenario + "_urban.csv";
@@ -288,33 +289,7 @@ public class CSVImporter {
 				int ageclass3 = Integer.parseInt(items[c++]);
 				int ageclass4 = Integer.parseInt(items[c++]);
 				int ageclass5 = Integer.parseInt(items[c++]);
-
-//				// LAND classes
-//				int landclass1 = Integer.parseInt(items[c++]);
-//				int landclass2 = Integer.parseInt(items[c++]);
-//				int landclass3 = Integer.parseInt(items[c++]);
-//				int landclass4 = Integer.parseInt(items[c++]);
-//				int landclass5 = Integer.parseInt(items[c++]);
-//				int landclass6 = Integer.parseInt(items[c++]);
-//				int landclass7 = Integer.parseInt(items[c++]);
-//
-//				ArrayList<Integer> landClasses = new ArrayList<Integer>();
-//				for (int i = 0; i < landclass1; i++)
-//					landClasses.add(Agent.LAND_CLASSES[0]);
-//				for (int i = 0; i < landclass2; i++)
-//					landClasses.add(Agent.LAND_CLASSES[1]);
-//				for (int i = 0; i < landclass3; i++)
-//					landClasses.add(Agent.LAND_CLASSES[2]);
-//				for (int i = 0; i < landclass4; i++)
-//					landClasses.add(Agent.LAND_CLASSES[3]);
-//				for (int i = 0; i < landclass5; i++)
-//					landClasses.add(Agent.LAND_CLASSES[4]);
-//				for (int i = 0; i < landclass6; i++)
-//					landClasses.add(Agent.LAND_CLASSES[5]);
-//				for (int i = 0; i < landclass7; i++)
-//					landClasses.add(Agent.LAND_CLASSES[6]);
-//
-//			
+		
 
 
 				Municipality obj = new Municipality(NIS, name);
@@ -430,8 +405,6 @@ public class CSVImporter {
 				int LU = Integer.parseInt(items[c++]);
 				int CROP_type = Integer.parseInt(items[c++]);
 				float area = Float.parseFloat(items[c++]);
-				//float x = Float.parseFloat(items[c++]);
-				//float y = Float.parseFloat(items[c++]);
 				int zone = Integer.parseInt(items[c++]);
 
 				String NIS = items[c++];
@@ -564,6 +537,7 @@ public class CSVImporter {
 		BufferedReader br = null;
 		String line = "";
 		String csvSplitBy = ",";
+		double CROP_SUBSIDY_FACTOR = 1;
 
 		try {
 
@@ -582,10 +556,14 @@ public class CSVImporter {
 				Market.addCrop(cropID);
 
 				for (int year = 0; c < items.length; c++, year++) {
-					Market.addMarketValue(Config.START_YEAR + year, cropID, Float.parseFloat(items[c]));
+					if (Config.CROP_SUBSIDY && cropID == Config.SUBSIDIZED_CROP){
+						CROP_SUBSIDY_FACTOR = Config.CROP_SUBSIDY_FACTOR;
+					}
+					Market.addMarketValue(Config.START_YEAR + year, cropID, Float.parseFloat(items[c])*CROP_SUBSIDY_FACTOR);
 				}
 
-			}
+				}
+		
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

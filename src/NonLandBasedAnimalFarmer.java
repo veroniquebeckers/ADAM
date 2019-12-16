@@ -29,7 +29,42 @@ public class NonLandBasedAnimalFarmer extends AnimalFarmer {
 
 	@Override
 	public int getNextCoverType(int year, float area, Parcel p) {
+		if (p.getCoverType()==Config.agr_buildings)
+		{
 		return Config.agr_buildings;
+		}
+		else if (p.getCoverType()==Config.cropLand || p.getCoverType()==Parcel.MAIZE)
+		{
+		return Parcel.MAIZE;
+		}
+		else if (p.getCoverType()==Config.grassland)
+		{
+		return Config.grassland;
+		}
+		else {
+			double r = CustomRandom.getDouble();
+			if (r<0.5)
+			{
+				return Config.agr_buildings;
+				}
+			else if (r<0.7)
+			{
+				return Parcel.MAIZE;
+				}
+			else
+			{
+				return Config.grassland;
+				}
+			}
+			
 	}
 	
 }
+
+// non land based
+
+// 30% is for grassland
+// 20% is for fodder
+// 50% is for buildings
+
+//==> see report schaalgrootte en schaalvergrotin in de vlaamse land- en tuinbouw

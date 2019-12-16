@@ -8,7 +8,7 @@ public class Config {
 	public static String basePath = "./Input_Belgium_AGR_13/";
 	public static String basePathProductivity = basePath + "/PROD/";
 	public static String basePathScenario = basePath + "/SCENARIO/";
-	public static String outputFolder ="./OUTPUT_noScen_test/";
+	public static String outputFolder ="./OUTPUT_crops_2013/";
 		
 	public static boolean ABM_output = true;
 	public static boolean DVM_output = false;
@@ -22,22 +22,24 @@ public class Config {
 	 */
 	
 	public static int START_YEAR = 2013;
-	public static int END_YEAR = 2035;
+	public static int END_YEAR = 2013;
 	public static int CURRENT_YEAR;
-	public static String scenario = "SE";
+	public static String scenario = "BAU";
 
 	public static final int RETIREMENT_AGE = 65; /**65=legal pension age in Belgium*/
 	public static double RETIREMENT_CHANCE = 0.14; /**calibrated parameter*/
 	
 	public static final float SUBSIDY = 0;	/**General fixed subsidy that each farmer recieves if GENERAL_FARM_SUBSIDY = true*/
-	public static final double SUBSIDY_PER_HA = 1000; /**Absolute amount of subsidy per ha, used if AREA_SUBSIDY = true*/
-	public static final double BSS_IMPACT_FACTOR = 1.1; /*Correction factor on BSS due to policy if Config.POLICIY_BSS_IMPACT = true*/
-	
-	public static boolean SMALL_FARM_SUBSIDY = false; /**If true, MainModel.farmSurvialChange results in small farms getting average survival chance in stead of lower chances*/
-	public static boolean GENERAL_FARM_SUBSIDY = false; /*If true, define Config.SUBSIDY for fixed subsidy*/
-	public static boolean AREA_SUBSIDY = false; /*If true, define Config.SUBSIDY_PER_HA*/
-	public static boolean POLICY_BSS_IMPACT = false; /*Set true to use policy correction impact on BSS, e.g. BSS+10% due to market protection*/
-
+	public static final double SUBSIDY_PER_HA = 1000; /**Subsidy per ha, used if AREA_SUBSIDY = true*/
+	public static final double BSS_IMPACT_FACTOR = 0.9; /*Correction factor on BSS due to policy if Config.POLICIY_BSS_IMPACT = true or Config.SMALL_FARM_SUBSIDY = true */
+	public static final double CROP_SUBSIDY_FACTOR = 1;
+	public static final int SUBSIDIZED_CROP = 105;
+			
+	public static boolean SMALL_FARM_SUBSIDY = false; /**If true, farms bellow average are affected by the BSS_IMPACT_FACTOR*/
+	public static boolean GENERAL_FARM_SUBSIDY = false; /*If true, define Config.SUBSIDY for fixed subsidy per farm*/
+	public static boolean AREA_SUBSIDY = false; /*If true, subsidies are given per ha according to Config.SUBSIDY_PER_HA*/
+	public static boolean POLICY_BSS_IMPACT = false; /*If true all farms are affected by the BSS_IMPACT_FACTOR, e.g. BSS+10% due to market protection*/
+	public static boolean CROP_SUBSIDY = false;
 
 /**
  * Allow model to run with DVM, which starts before 2010 where no scenario data is available
@@ -66,7 +68,7 @@ public class Config {
 	public static final int fruittrees = 93;
 	public static final int greenhouses = 94;
 	public static final int agr_buildings = 95;
-	public static int farm_house = 96;
+	public static final int farm_house = 96;
 	public static int cropLand = 0;
 	
 	// survival percentage per agricultural zone
@@ -84,13 +86,7 @@ public class Config {
 	public static final double survArdennen = 0.09;
 	public static final double survHenegouwse_Kempen = 0.18;
 	
-	public static float startPercWheat = (float) 0.25;
-	public static float startPercBarley = (float) 0.04;
-	public static float startPercPotatoes = (float) 0.06;
-	public static float startPercGrass = (float) 0.3;
-	public static float startPercSugarbeet = (float) 0.08;
-	public static float startPercRapeseed = (float) 0.01;
-	public static float startPercMaize = (float) 0.18;
+	
 	
 	
 	public static float landOwnershipPerc = 1/3;
@@ -192,6 +188,19 @@ public class Config {
 		return 0;
 		
 	}
+	
+	public static float startPercWheat = (float) 0.25;
+	public static float startPercBarley = (float) 0.03;
+	public static float startPercMaize = (float) 0.18;
+	public static float startPercSugarbeet = (float) 0.05;
+	public static float startPercRapeseed = (float) 0.01;
+	public static float startPercPotatoes = (float) 0.06;
+	public static float startPercGrass = (float) 0.42;
+	
+	static public long a;
+	static public long b;
+	
+	static public double[] stats = new double[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	public static float startPerc(int crop) {
 		if (crop == 101) return startPercWheat;
 		if (crop == 102) return startPercBarley;

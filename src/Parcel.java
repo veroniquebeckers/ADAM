@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -7,13 +8,13 @@ import java.util.HashMap;
  *
  */
 public class Parcel {
-	public static final int UNKOWN = 0;
-	public static final int NO_PRESSURE = 0;
-	public static final int SLIGHT_PRESSURE = 1;
-	public static final int PRESSURE = 1;
-	public static final int HIGH_PRESSURE = 1;
-	public static final int VERY_HIGH_PRESSURE = 1;
-	
+//	public static final int UNKOWN = 0;
+//	public static final int NO_PRESSURE = 0;
+//	public static final int SLIGHT_PRESSURE = 1;
+//	public static final int PRESSURE = 1;
+//	public static final int HIGH_PRESSURE = 1;
+//	public static final int VERY_HIGH_PRESSURE = 1;
+//	
 	
 	public static final int NONE = 0;
 	public static final int WHEAT = 101;
@@ -25,10 +26,6 @@ public class Parcel {
 	public static final int GRASS = 107;
 	
 	public static int[] CROP_TYPES = { WHEAT, BARLEY, MAIZE, SUGARBEET, RAPESEED, POTATO, GRASS};
-
-
-	
-
 
 	/**
 	 * Define the land use classes that will be used in the model.
@@ -378,6 +375,7 @@ public class Parcel {
 
 
 	public float getProductivityForCrop(int year, int landCover) {
+
 		if(this.productivity.containsKey(new Integer(landCover)))
 		{
 			return this.productivity.get(new Integer(landCover));
@@ -410,13 +408,20 @@ public class Parcel {
 		return location;
 	}
 
-	
+/*@Override
+    public int compareTo(Parcel a) 
+{
+      return (this.getArea() < a.getArea() ? -1 : 
+          (this.getArea() == a.getArea() ? 0 : 1));     
+        }
+	*/
 
-	
-	
+
+    public int compare(Parcel a, Parcel b) {
+        return Float.compare(a.area, b.area);
+        }
+
 }
-
-
 
 
 

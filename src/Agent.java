@@ -19,7 +19,7 @@ public abstract class Agent {
 	private Municipality municipality;
 	private boolean isDead;
 	private float totalArea;
-	public int getGeneralCover;
+	private int generalCover;
 	public double getSubsidy;
 
 	private static int AGENT_COUNTER = 5;
@@ -37,6 +37,11 @@ public abstract class Agent {
 		// this.setIncome(Float.POSITIVE_INFINITY);
 
 		this.id = AGENT_COUNTER++;
+	}
+	
+	public int getGeneralCover()
+	{
+		return generalCover;
 	}
 
 	public Agent(int id) {
@@ -175,6 +180,7 @@ public abstract class Agent {
 			Parcel p = this.parcelList.get(i);
 			if(p.getCoverType()!=Config.farm_house && p.getCoverType()!=Config.agr_buildings){
 			int newCrop = getNextCoverType(year, p.getArea(), p);
+			
 			// if (p.getAgricultZone()==14 || p.getAgricultZone()==14){
 			// if(newCrop==103){
 			// System.out.println ("I'm in the sand area and I choose maize!");
