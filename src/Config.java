@@ -5,10 +5,10 @@ public class Config {
 
 	
 //	public static String outputFolder ="./OUTPUT_Bel_" + FOLDER_NAME  +"/";
-	public static String basePath = "./Input_Belgium_AGR_13/";
+	public static String basePath = "./Input_Belgium_AGR_00/";
 	public static String basePathProductivity = basePath + "/PROD/";
 	public static String basePathScenario = basePath + "/SCENARIO/";
-	public static String outputFolder ="./OUTPUT_crops_2013/";
+	public static String outputFolder ="./OUTPUT_noURB_/";
 		
 	public static boolean ABM_output = true;
 	public static boolean DVM_output = false;
@@ -21,21 +21,21 @@ public class Config {
 	 * Start and end year of the model.
 	 */
 	
-	public static int START_YEAR = 2013;
-	public static int END_YEAR = 2013;
+	public static int START_YEAR = 2000;
+	public static int END_YEAR = 2018;
 	public static int CURRENT_YEAR;
 	public static String scenario = "BAU";
 
 	public static final int RETIREMENT_AGE = 65; /**65=legal pension age in Belgium*/
 	public static double RETIREMENT_CHANCE = 0.14; /**calibrated parameter*/
 	
-	public static final float SUBSIDY = 0;	/**General fixed subsidy that each farmer recieves if GENERAL_FARM_SUBSIDY = true*/
-	public static final double SUBSIDY_PER_HA = 1000; /**Subsidy per ha, used if AREA_SUBSIDY = true*/
-	public static final double BSS_IMPACT_FACTOR = 0.9; /*Correction factor on BSS due to policy if Config.POLICIY_BSS_IMPACT = true or Config.SMALL_FARM_SUBSIDY = true */
+	public static final float SUBSIDY = 0;	/**General fixed subsidy that each farmer receives if GENERAL_FARM_SUBSIDY = true*/
+	public static final double SUBSIDY_PER_HA = 0; /**Subsidy per ha, used if AREA_SUBSIDY = true*/
+	public static final double BSS_IMPACT_FACTOR = 1; /*Correction factor on BSS due to policy if Config.POLICIY_BSS_IMPACT = true or Config.SMALL_FARM_SUBSIDY = true */
 	public static final double CROP_SUBSIDY_FACTOR = 1;
 	public static final int SUBSIDIZED_CROP = 105;
 			
-	public static boolean SMALL_FARM_SUBSIDY = false; /**If true, farms bellow average are affected by the BSS_IMPACT_FACTOR*/
+	public static boolean SMALL_FARM_SUBSIDY = false; /**If true, only farms below average are affected by the BSS_IMPACT_FACTOR*/
 	public static boolean GENERAL_FARM_SUBSIDY = false; /*If true, define Config.SUBSIDY for fixed subsidy per farm*/
 	public static boolean AREA_SUBSIDY = false; /*If true, subsidies are given per ha according to Config.SUBSIDY_PER_HA*/
 	public static boolean POLICY_BSS_IMPACT = false; /*If true all farms are affected by the BSS_IMPACT_FACTOR, e.g. BSS+10% due to market protection*/
@@ -69,7 +69,7 @@ public class Config {
 	public static final int greenhouses = 94;
 	public static final int agr_buildings = 95;
 	public static final int farm_house = 96;
-	public static int cropLand = 0;
+//	public static int cropLand = 0;
 	
 	// survival percentage per agricultural zone
 	public static final double survZandstreek = 0.19;
@@ -89,7 +89,7 @@ public class Config {
 	
 	
 	
-	public static float landOwnershipPerc = 1/3;
+	public static float landOwnershipRate = 1/3;
 
 	
 	
@@ -125,7 +125,9 @@ public class Config {
 	
 	
 	public static final double BSSforLBAF = 2316.4;
-	public static final float URBANISATION_DISTANCE = 1000;
+	
+	
+	public static final float URBANISATION_DISTANCE = 1000; //Threshold for the minimum distance to another agricultural parcel, before the parcel is considered to be too distant to be still in use as agricultural parcel
 	public static final int UrbanisationTreshold = 0; //Amount of agricultural parcels still left in surrounding when parcel is considered too isolated to be used commercially
 
 	public static double getSurvivalPercentageForZone(int zone)
@@ -189,26 +191,26 @@ public class Config {
 		
 	}
 	
-	public static float startPercWheat = (float) 0.25;
-	public static float startPercBarley = (float) 0.03;
-	public static float startPercMaize = (float) 0.18;
-	public static float startPercSugarbeet = (float) 0.05;
-	public static float startPercRapeseed = (float) 0.01;
-	public static float startPercPotatoes = (float) 0.06;
-	public static float startPercGrass = (float) 0.42;
+	public static float startRateWheat = (float) 0.25;
+	public static float startRateBarley = (float) 0.03;
+	public static float startRateMaize = (float) 0.18;
+	public static float startRateSugarbeet = (float) 0.05;
+	public static float startRateRapeseed = (float) 0.01;
+	public static float startRatePotatoes = (float) 0.06;
+	public static float startRateGrass = (float) 0.42;
 	
 	static public long a;
 	static public long b;
 	
 	static public double[] stats = new double[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	public static float startPerc(int crop) {
-		if (crop == 101) return startPercWheat;
-		if (crop == 102) return startPercBarley;
-		if (crop == 103) return startPercMaize;
-		if (crop == 104) return startPercSugarbeet;
-		if (crop == 105) return startPercRapeseed;
-		if (crop == 106) return startPercPotatoes;
-		if (crop == 107) return startPercGrass;
+		if (crop == 101) return startRateWheat;
+		if (crop == 102) return startRateBarley;
+		if (crop == 103) return startRateMaize;
+		if (crop == 104) return startRateSugarbeet;
+		if (crop == 105) return startRateRapeseed;
+		if (crop == 106) return startRatePotatoes;
+		if (crop == 107) return startRateGrass;
 		return 0;
 	}
 

@@ -70,7 +70,7 @@ public class MainModel {
 		// FINAL OUTPUT
 		if (Config.ABM_output == true) {
 			log("");
-			printParcelHistory();
+//			printParcelHistory();
 			printAgentHistory();
 
 		}
@@ -152,8 +152,6 @@ public class MainModel {
 
 			processYear(year);
 			
-			Config a = new Config();
-			System.out.println((100.0 * Config.a) / (double)Config.b);
 		}
 
 	}
@@ -218,9 +216,9 @@ public class MainModel {
 						ArrayList<Parcel> rentedParcelList = agent.getRentedParcels();
 						for (int p = 0; p < rentedParcelList.size(); p++) {
 							reassignParcel(year, rentedParcelList.get(p));
+							}
 						}
-					}
-				} else if (age >= Config.RETIREMENT_AGE && CustomRandom.getDouble() <= Config.RETIREMENT_CHANCE) {
+					} else if (age >= Config.RETIREMENT_AGE && CustomRandom.getDouble() <= Config.RETIREMENT_CHANCE) {
 					terminateUncompetitiveAgent(year, agent);
 					deadAgents++;
 				}
@@ -308,9 +306,15 @@ public class MainModel {
 		myAgents.remove(agent);
 
 	}
-
+/**
+ * Looks for a parcel in the neighbourhood of the farmer that can be added to the farmer's farm.
+ * @param a - The agents that is looking for a new parcel to add to its farm.
+ * @param areaCheck - When true, a size restriction applies on the total farm size of the farmer
+ * @param typeCheck - When true, a typeCheck is performed on the added parcel through Agent.canOccupyParcel.
+ * @return boolean - When true, a parcel is found and the method is ended.
+ */
 	private boolean joinNeighboringParcelbyFarmer(Agent a, boolean areaCheck, boolean typeCheck) {
-
+		//Create a list of all parcels neighbouring the parcels owned by the farmer
 		ArrayList<Parcel> parcels = a.getParcelList();
 		ArrayList<Parcel> neighbParcels = new ArrayList<Parcel>();
 
@@ -321,10 +325,10 @@ public class MainModel {
 		}
 
 		Collections.shuffle(neighbParcels);
-
 		int size = neighbParcels.size();
 		for (int i = 0; i < size; i++) {
 			Parcel potParcel = neighbParcels.get(i);
+			//Looks whether the farmer can own the parcel, based on land use if typeCheck=true
 
 			if (potParcel.getAgent() == Agent.INITIAL) {
 				if (!typeCheck) {
@@ -332,6 +336,7 @@ public class MainModel {
 					return true;
 
 				} else {
+					//Looks whether the farmer can own the parcel, based on area if areaCheck=true
 					if (a.canOccupyParcel(potParcel)) {
 						if (!areaCheck) {
 							// This owner can take on the given parcel
@@ -349,34 +354,57 @@ public class MainModel {
 				}
 			}
 		}
+		//The parcel can not be added to the farmer's farm
 		return false;
 	}
 
+
 	/**
-	 * Parcel argument is a parcel belonging to agent.initial that hasn't been
-	 * given away yet
+	 * Assign a parcel to any agent within the municipality or the 
+	 * neighbouring municipality that can occupy it.
+	 * @param p - A parcel for which an owner is sought.
 	 */
 	private void joinMunicipParcel(Parcel p) {
-
+		// List all agents in the municipality of the parcel
 		ArrayList<Agent> municipAgents = (ArrayList<Agent>) p.getMunicipality().getAgents().clone();
-
+		ArrayList<Agent> neighbouringAgents = new ArrayList<Agent>();
+		//Add agents in neighbouring municipalities that are not in the list yet.
+		for(Parcel potParcel : p.getNeighboringParcels()){
+			ArrayList<Agent> neighbourAgents = potParcel.getMunicipality().getAgents();
+			for(Agent aa : neighbourAgents)
+			{
+				if(!neighbouringAgents.contains(aa))
+				{
+					neighbouringAgents.add(aa);
+				}
+			}
+		}
+		//Find a random agent form the agent list that can occupy the parcel.
+		municipAgents.addAll(neighbouringAgents);
 		Collections.shuffle(municipAgents);
-
 		int size = municipAgents.size();
 		for (int i = 0; i < size; i++) {
 			Agent potOwner = municipAgents.get(i);
-
 			if (potOwner != Agent.INITIAL) {
 				if (potOwner.canOccupyParcel(p)) {
-
 					p.setAgent(potOwner);
-
+					return;
 				}
 			}
 		}
 	}
-
+/**
+ * Find a home parcel for every agent. First by looking at parcels that
+ * are labeled as agricultural building. Then by giving a random parcel
+ * within the municipality.
+ * @param parcels - An ArrayList of all parcels within the municipality
+ * @param nrOfAgents - The total number of farmers in the municipality
+ * @param a - The farmer for which a home parcel is currently sought.
+ * @return p - The parcel that is assigned a home parcel for this farmer.
+ */
 	private Parcel getFreeParcelForAgent(ArrayList<Parcel> parcels, int nrOfAgents, Agent a) {
+		// Check if there are enough parcels for the agents within the municpality
+		// If not, add the neighbouring parcels of all parcels in the municipality.
 		if (parcels.size() < nrOfAgents) {
 			ArrayList<Parcel> addedParcels = new ArrayList<Parcel>();
 			for (Parcel p : parcels) {
@@ -386,16 +414,16 @@ public class MainModel {
 			parcels.addAll(addedParcels);
 
 		}
-
+		//@Jeroen: wat is dit? is dit nog van toen er een size restriction was?
 		ArrayList<Parcel> potentials = (ArrayList<Parcel>) parcels.clone();
-//		Collections.shuffle(potentials);
 		Collections.sort(potentials, new Comparator<Parcel>() {
 			@Override
 			public int compare(Parcel a, Parcel b) {
 		        return Float.compare(a.getArea(),b.getArea());
 		    }
 		});
-
+		//Find a parcel that is currently not owned (i.e. Agent.INITIAL) and is
+		//labeled as an agricultural building. Make it into the home parcel of the agent.
 		for (Parcel p : potentials) {
 			if (p.getAgent() == Agent.INITIAL && p.getCoverType() == Config.agr_buildings) {
 				a.setAgrzone(p.getAgricultZone());
@@ -405,8 +433,8 @@ public class MainModel {
 
 		}
 
-		// if farmers without parcels are still left, give another parcel than
-		// building and set parcel to agr.building
+		// If farmers without parcels are still left, give another parcel than
+		// building and set parcel to farm house
 
 		for (Parcel p : potentials) {
 			if (p.getAgent() == Agent.INITIAL) {
@@ -429,13 +457,19 @@ public class MainModel {
 		throw new RuntimeException("Less parcels than farmers in the municipality");
 	}
 
+	/**
+	* Links agents to parcels, until every parcel is connected to an agent. 
+	* First by giving every farmer one parcel,its home parcel, then by letting 
+	* the farm expand by joining parcels that are close to the home plot.
+	*/
 	private void assignAgents() {
-
+		log("Start assigning agents");
 		// Loop over all municipalities
 		for (Municipality munic : this.municipalityList) {
 			// Loop over all agents within municipality
 			int nrOfAgents = munic.getAgents().size();
 			ArrayList<Agent> agents = (ArrayList<Agent>) munic.getAgents().clone();
+			// Find a home plot for every agent
 			for (int i = 0; i < nrOfAgents; i++) {
 				Agent a = agents.get(i);
 				if (a != Agent.INITIAL) {
@@ -457,26 +491,16 @@ public class MainModel {
 			currentList = (ArrayList<Parcel>) Agent.INITIAL.getParcelList().clone();
 			parcelsAtStart = currentList.size();
 
-			// log("Parcels left:" + currentList.size());
-
-			// for (int i = 0; i < currentList.size(); i++) {
-			// Parcel p = currentList.get(i);
 			for (Agent a : this.myAgents) {
-
-				// Assign it to a neigboring parcel keeping the max land
-				// restrictions in mind
-				if (joinNeighboringParcelbyFarmer(a, false, true)) {
-				}
-
+				joinNeighboringParcelbyFarmer(a, false, true);
 			}
-
 		} while (parcelsAtStart != Agent.INITIAL.getParcelList().size());
-
+		log("Parcels left over after looking for suitable neighbours: " + Agent.INITIAL.getParcelList().size());
+		
+		
+		
 		// Some parcels are still not assigned to an agent. We try to find a
 		// suitable owner for each parcel in the whole municipality
-		log("Parcels left over after looking for suitable neighbours: " + Agent.INITIAL.getParcelList().size());
-
-		currentList = (ArrayList<Parcel>) Agent.INITIAL.getParcelList().clone();
 
 		if (Agent.INITIAL.getParcelList().size() > 0) {
 			currentList = (ArrayList<Parcel>) Agent.INITIAL.getParcelList().clone();
@@ -485,36 +509,37 @@ public class MainModel {
 				Parcel p = i.next();
 				joinMunicipParcel(p);
 			}
-			log("Parcels left over after looking in municipality for owner: " + Agent.INITIAL.getParcelList().size());
 		}
+			log("Parcels left over after looking in municipality for owner: " + Agent.INITIAL.getParcelList().size());
+		
 
 		// We try to assign parcels again looking at neighbours, after looking
-		// in the whole
-		// municipality for suitable owners
+		// in the whole municipality for suitable owners
 		if (Agent.INITIAL.getParcelList().size() > 0) {
 			do {
 				currentList = (ArrayList<Parcel>) Agent.INITIAL.getParcelList().clone();
 				parcelsAtStart = currentList.size();
 
-				// log("Parcels left:" + currentList.size());
-				// for (int i = 0; i < currentList.size(); i++)
-				// {
-				// Parcel p = currentList.get(i);
 				for (Agent a : this.myAgents) {
-
-					// Assign it to a neigbouring parcel keeping the max land
-					// restrictions in mind
-					if (joinNeighboringParcelbyFarmer(a, false, true)) {
-
-					}
+					joinNeighboringParcelbyFarmer(a, false, true);
 				}
 
 			} while (parcelsAtStart != Agent.INITIAL.getParcelList().size());
 
-			log("Parcels left over after looking again for suitable neighbours: "
-					+ Agent.INITIAL.getParcelList().size());
+			log("Parcels left over after looking again for suitable neighbours: "+ Agent.INITIAL.getParcelList().size());
 		}
 
+/*		if (parcels.size() < nrOfAgents) {
+			ArrayList<Parcel> addedParcels = new ArrayList<Parcel>();
+			for (Parcel p : parcels) {
+				ArrayList<Parcel> neighbors = p.getNeighboringParcels();
+				addedParcels.addAll(neighbors);
+			}
+			parcels.addAll(addedParcels);
+
+		}
+*/
+		
 		// Some parcels are still not assigned to an agent. Parcels are now
 		// given to neighbours
 		// without type restrictions
@@ -527,14 +552,11 @@ public class MainModel {
 			while (i.hasNext()) {
 				Parcel p = i.next();
 				joinNeighboringParcel(p, false, false);
-
 			}
 			log("Parcels left over after dropping type restriction: " + Agent.INITIAL.getParcelList().size());
 
 		}
-
 		log("Number of final free plots: " + Agent.INITIAL.getParcelList().size());
-
 	}
 
 	private boolean joinNeighboringParcel(Parcel p, boolean areaCheck, boolean typeCheck) {
@@ -580,45 +602,34 @@ public class MainModel {
 	 * @param parcel
 	 */
 	private void reassignParcel(int year, Parcel parcel) {
-
-		ArrayList<Agent> neighbors = parcel.getNeighbors();
-
 		Agent currentAgent = parcel.getAgent();
-
 		Integer landUse = parcel.getLandUse();
-
+		ArrayList<Agent> neighbors = parcel.getNeighbors();
 		ArrayList<Agent> potentialsSameClass = new ArrayList<Agent>();
 		ArrayList<Agent> potentialsOthClass = new ArrayList<Agent>();
 
 		for (int i = 0; i < neighbors.size(); i++) {
 			Agent neighbor = neighbors.get(i);
-			// float income = neighbor.getIncome(year);
 
 			if (neighbor == currentAgent) {
 				// someone can't take over his own parcels
 				continue;
 			}
 
-			// Check if the given neighbour is able to take over this kind of
-			// land
+			// Check if the given neighbour is able to take over this kind 
+			// of lond (i.e. is it agricultural land?)
 			if (!neighbor.canTakeOverLandOfType(landUse)) {
 				continue;
 			}
-
+			//Check if the farmer is young enough to expand
 			if (neighbor.getAge() <= Config.RETIREMENT_AGE && neighbor.isFarmer()) {
+				//Check if the farmer is from the same or a similar type as the current owner
 				if (neighbor.hasHigherChanceOfTakeOver(currentAgent)) {
-					// if (income > Config.INCOME_THRESHOLD *
-					// Config.HIGH_INCOME_MULTIPLIER) {
-					// young and full of money, so he can buy
 					potentialsSameClass.add(neighbor);
 				} else {
 					potentialsOthClass.add(neighbor);
 				}
-				// } else {
-				// log("Too poor: " + income);
-				// }
-			} else {
-				// log("Too old or not a farmer (=landlord)");
+
 			}
 		}
 
@@ -641,22 +652,6 @@ public class MainModel {
 			}
 		}
 	}
-	// log("Assigning parcel " + parcel.getID() +" to " +
-	// parcel.getAgent().getID());
-
-	// private void sanityCheck(int year) {
-	// for (int i = 0; i < myAgents.size(); i++) {
-	// Agent ag = myAgents.get(i);
-	//
-	// if (ag.getAge() < Config.RETIREMENT_AGE) {
-	// float income = ag.getIncome(year);
-	// if (income > Config.INCOME_THRESHOLD * Config.HIGH_INCOME_MULTIPLIER) {
-	// throw new Error("Someone died, but nobody in the vicinity wants his
-	// land");
-	// }
-	// }
-	// }
-	// }
 
 	public void addAgent(Agent agent) {
 		this.myAgents.add(agent);
@@ -966,7 +961,7 @@ public class MainModel {
 		}
 
 	}
-
+/**
 	public double[] getStatsForRegionalFarmSizeForType(Agent retiringFarmer) {
 		ArrayList<Float> farmSizes = new ArrayList<Float>();
 		double totFarmSize = 0;
@@ -987,7 +982,12 @@ public class MainModel {
 		statistics[1] = SD;
 		return statistics;
 	}
-
+*/
+/**
+ * 
+ * @param retiringFarmer
+ * @return
+ */
 	public double[] getAverageBSSforType(Agent retiringFarmer) {
 		ArrayList<Double> farmBSS = new ArrayList<Double>();
 		double totFarmBSS = 0;
@@ -1028,36 +1028,6 @@ public class MainModel {
 				correctionFactorBSS = Config.BSS_IMPACT_FACTOR;
 			}
 		}
-
-		// if (retiringFarmer.getFarmerType() == "NonLandBasedAnimalFarmer") {
-		// return survivalChance;
-		// } else if (retiringFarmer.getFarmerType() == "GreenhouseFarmer") {
-		// return survivalChance;
-		// } else if (retiringFarmer.getBSS()*correctionFactorBSS
-		// +retiringFarmer.getSubsidy > (mean + SD * 2.5)) {
-		// return 0.8;
-		// } else if
-		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
-		// > (mean + SD * 1.5)) {
-		// return survivalChance * 1.75;
-		// } else if
-		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
-		// > (mean + SD * 0.5)) {
-		// return survivalChance * 1.5;
-		// } else if
-		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
-		// > (mean - SD * 0.5)) {
-		// return survivalChance * 1;
-		// } else if
-		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy>
-		// (mean - SD * 1.5)) {
-		// return survivalChance * 0.5;
-		// } else if
-		// (retiringFarmer.getBSS()*correctionFactorBSS+retiringFarmer.getSubsidy
-		// > (mean - SD * 2.5)) {
-		// return survivalChance * 0.25;
-		// }
-		// return survivalChance*0.1;
 
 		if (retiringFarmer.getFarmerType() == "NonLandBasedAnimalFarmer") {
 			return survivalChance* correctionFactorSurv;

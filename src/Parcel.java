@@ -23,9 +23,9 @@ public class Parcel {
 	public static final int SUGARBEET = 104;
 	public static final int RAPESEED = 105;
 	public static final int POTATO = 106;
-	public static final int GRASS = 107;
+//	public static final int GRASS = 107;
 	
-	public static int[] CROP_TYPES = { WHEAT, BARLEY, MAIZE, SUGARBEET, RAPESEED, POTATO, GRASS};
+	public static int[] CROP_TYPES = { WHEAT, BARLEY, MAIZE, SUGARBEET, RAPESEED, POTATO};
 
 	/**
 	 * Define the land use classes that will be used in the model.
@@ -420,6 +420,17 @@ public class Parcel {
     public int compare(Parcel a, Parcel b) {
         return Float.compare(a.area, b.area);
         }
+
+	public boolean isCropLand() {
+			int cropType =  this.getCoverType();
+			return cropType == Parcel.NONE || 
+					cropType == Parcel.MAIZE || 
+							cropType == Parcel.WHEAT || 
+							cropType == Parcel.SUGARBEET ||
+							cropType == Parcel.RAPESEED || 
+							cropType == Parcel.POTATO || 
+							cropType == Parcel.BARLEY;
+	}
 
 }
 

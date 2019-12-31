@@ -28,7 +28,7 @@ public class PermanentCropFarmer extends CropFarmer {
 	
 	@Override
 	public int getNextCoverType(int year, float area, Parcel p) {
-		return Config.arboriculture;
+		return p.getCoverType();
 	}
 	
 	@Override

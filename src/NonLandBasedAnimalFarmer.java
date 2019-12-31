@@ -33,7 +33,7 @@ public class NonLandBasedAnimalFarmer extends AnimalFarmer {
 		{
 		return Config.agr_buildings;
 		}
-		else if (p.getCoverType()==Config.cropLand || p.getCoverType()==Parcel.MAIZE)
+		else if (p.isCropLand() )
 		{
 		return Parcel.MAIZE;
 		}

@@ -118,6 +118,8 @@ public class YearlyCropFarmer extends CropFarmer {
 
 	@Override
 	public boolean canOccupyParcel(Parcel p) {
-		return p.getCoverType() == Config.cropLand;
+		
+		return p.isCropLand();
+		
 	}
 }

@@ -9,13 +9,13 @@ import java.util.Random;
 
 // Names of the different files to be imported
 public class CSVImporter {
-	String municip = "municipality.csv";
-	String market = "market_varPrice.csv";
+	String municip = "Municipality.csv";
+	String market = "Market_varPrice.csv";
 	String cropRot = "CropRot_stat.csv";
-	String parcels = "parcel_startCrop.csv";
+	String parcels = "Parcels.csv";
 //	String parcels = "parcel_startCrop.csv";
-	String neighborsFile = "agrNeighb.csv";
-	String mortalityFile = "mortality.csv";
+	String neighborsFile = "AgrNeighb.csv";
+	String mortalityFile = "Mortality.csv";
 	String parcelLosses = Config.scenario + "_urban.csv";
 	
 	String mappingFile = "DVM2ABMdict.csv";

@@ -175,21 +175,16 @@ public abstract class Agent {
 
 	}
 
+	/**
+	 * Updates the land cover of all agricultural parcels that are not
+	 * farm houses or agricultural buildings
+	 * @param year - The current year of the model run.
+	 */
 	public void updateCoverType(int year) {
 		for (int i = 0; i < this.parcelList.size(); i++) {
 			Parcel p = this.parcelList.get(i);
 			if(p.getCoverType()!=Config.farm_house && p.getCoverType()!=Config.agr_buildings){
 			int newCrop = getNextCoverType(year, p.getArea(), p);
-			
-			// if (p.getAgricultZone()==14 || p.getAgricultZone()==14){
-			// if(newCrop==103){
-			// System.out.println ("I'm in the sand area and I choose maize!");
-			// }
-			// else {
-			// System.out.println ("I'm in the sand area and I choose something
-			// else!");
-			// }
-			// }
 			p.setCoverType(newCrop);
 			}
 		}
@@ -231,16 +226,24 @@ public abstract class Agent {
 		return getClass().getName();
 	}
 
+	/**
+	 * Changes the land use of parcels from agriculture (2) to urban (1)
+	 * land use based on the input data on urbanisation or based on whether
+	 * the nearest agricultural parcels is further away than the UrbanisationTreshold
+	 * @param year - The current year of the model run
+	 */
 	public void updateParcels(int year) {
 		for (int i = 0; i < this.parcelList.size(); i++) {
 			Parcel p = this.parcelList.get(i);
 			ArrayList<Parcel> nearbyNeighbours = p.getNearestParcels();
 			ArrayList<Parcel> agriNeighbours = new ArrayList<Parcel>();
+			//Check if the parcel is becoming urbanised this year
 			if (year == p.getUrbanisationYear()) {
 				p.setLandUse(Parcel.URBAN);
 				p.setAgent(Agent.LANDLORD);
 				p.setCoverType(-1);
 			}
+			//Check if the parcel still has nearby agricultural neighbours
 			for(int j=0; j<nearbyNeighbours.size();j++){
 				if(nearbyNeighbours.get(j).getLandUse()==Parcel.AGRI){
 					agriNeighbours.add(nearbyNeighbours.get(j));
@@ -251,7 +254,6 @@ public abstract class Agent {
 				}
 			}
 		}
-
 	}
 
 	public int getAgrZone() {
@@ -274,7 +276,12 @@ public abstract class Agent {
 	// }
 	// this.BSS = BSS;
 	// }
-
+/*
+ * The BSS is returned for a farmer based on the farm type and the agricultural 
+ * zone where the farm is located. For land-based farming types, the BSS depends
+ * on the farm size. The average BSS per ha is defined in the Config class.
+ * 
+ */
 	public double getBSS() {
 		double BSS = 0.0;
 		if (this.getFarmerType().equals("YearlyCropFarmer")) {
@@ -292,7 +299,7 @@ public abstract class Agent {
 	// Returns the parcels that are not owned by the farmer
 	public ArrayList<Parcel> getRentedParcels() {
 		int size = this.parcelList.size();
-		int parcelsToKeep = (int)  (size * Config.landOwnershipPerc);
+		int parcelsToKeep = (int)  (size * Config.landOwnershipRate);
 		
 		return new ArrayList<Parcel>(parcelList.subList(size - parcelsToKeep, size));
 	}

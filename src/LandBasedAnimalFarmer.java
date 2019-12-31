@@ -30,7 +30,7 @@ public class LandBasedAnimalFarmer extends AnimalFarmer {
 	@Override
 	public int getNextCoverType(int year, float area, Parcel p) {
 		if(p.getCoverType()!=Config.grassland && p.getCoverType() != Config.agr_buildings && p.getCoverType() != Config.farm_house){
-			return Parcel.GRASS;
+			return Config.grassland;
 		}
 		return p.getCoverType();
 	}
